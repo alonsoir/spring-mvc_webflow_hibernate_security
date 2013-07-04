@@ -1,4 +1,6 @@
-﻿INSERT INTO users(
+#pass are generated using sha256 and the seed is the username. Do a google search using "sha256 online"
+
+INSERT INTO users(
             user_id, created_on, enabled, password, username)
     VALUES (1, current_timestamp, true, '30ddcf8aeb67e84ba8dc6792fcc6991703759d4686603413e975c18075e455ed', 'alonsoir');
 
@@ -20,6 +22,8 @@ INSERT INTO user_roles(
 INSERT INTO user_roles(
             user_role_id, authority, user_user_id)
     VALUES (3, 'ROLE_ADMIN', 2);
+
+# other useful sentences ;)
 
 select * from moroso;
 select * from juntas_ordinarias;
