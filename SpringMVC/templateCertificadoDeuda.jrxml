@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version last-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" 
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			  xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank Letter" language="java" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6b79148c-1e59-4b4a-a5ff-06b2162e3123">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Postgres fincas morosas"/>
+	<parameter name="IDDEUDA" class="java.lang.Long">
+		<parameterDescription><![CDATA[pk en la tabla viviendascondeudas]]></parameterDescription>
+	</parameter>
+	<parameter name="USERNAME" class="java.lang.String">
+		<parameterDescription><![CDATA[campo username en users]]></parameterDescription>
+	</parameter>
+	
+	<queryString>
+		<![CDATA[select mor.cp as CP_MOROSO, 
+       mor.direccion as DIRECCION_MOROSO,
+       mor.nifcif as NIFCIF_MOROSO,
+       mor.nombre AS NOMBRE_MOROSO,
+       mor.telefono AS TLF_MOROSO,
+       mor.ciudad AS CIUDAD_MOROSO,
+       comunidad.ciudad AS CIUDAD_COMUNIDAD,
+       comunidad.nombrecomunidad AS NOMBRE_COMUNIDAD,
+       comunidad.direccion AS DIRECCION_COMUNIDAD,
+       comunidad.adminfincas AS ADMIN_COMUNIDAD,
+       comunidad.presidente AS PRESI_COMUNIDAD,
+       juntas.fechacelebracion AS FECHA_CELEBRACION_JUNTAS,
+       juntas.textolibre AS TEXTO_LIBRE_JUNTAS
+from users as u, comunidadvecinos as comunidad, viviendascondeudas as vivi,moroso as mor,juntas_ordinarias as juntas
+where u.user_id=comunidad.usuario_user_id				AND
+	  comunidad.junta_idjunta = juntas.idjunta              AND
+      comunidad.idcomunidad  = vivi.comunidad_idcomunidad AND
+      mor.idmoroso = vivi.moroso_idmoroso                   AND
+      u.username=$P{USERNAME}								AND
+      vivi.iddeuda=$P{IDDEUDA}]]>
+	</queryString>
+	<field name="cp_moroso" class="java.lang.String"/>
+	<field name="direccion_moroso" class="java.lang.String"/>
+	<field name="nifcif_moroso" class="java.lang.String"/>
+	<field name="nombre_moroso" class="java.lang.String"/>
+	<field name="tlf_moroso" class="java.lang.String"/>
+	<field name="ciudad_moroso" class="java.lang.String"/>
+	<field name="ciudad_comunidad" class="java.lang.String"/>
+	<field name="nombre_comunidad" class="java.lang.String"/>
+	<field name="direccion_comunidad" class="java.lang.String"/>
+	<field name="admin_comunidad" class="java.lang.String"/>
+	<field name="presi_comunidad" class="java.lang.String"/>
+	<field name="fecha_celebracion_juntas" class="java.lang.String"/>
+	<field name="texto_libre_juntas" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="90" splitType="Stretch">
+			<textField>
+				<reportElement uuid="85d07a55-620b-4667-9912-8bbf6d929799" x="380" y="60" width="200" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cp_moroso}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="2c9cec80-00af-44ac-9f5e-00acea6ba120" x="380" y="0" width="200" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_moroso}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b424860d-fd0c-4e4d-bcf2-be4e7054f80b" x="320" y="60" width="50" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ciudad_moroso}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="0be9bee3-9c50-469c-b4b6-81abef92f8b1" x="380" y="30" width="200" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{direccion_moroso}.toUpperCase()]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="39" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="5f37b14b-d12f-47d9-94a2-496846835ee8" x="40" y="10" width="140" height="20"/>
+				<textElement/>
+				<text><![CDATA[Comunidad de propietarios]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="189c5a70-4592-44c5-85f0-39e5f00b8c07" x="186" y="10" width="200" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_comunidad}.toUpperCase()]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="301" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="58cc4cc8-8f7b-40d5-b7af-f246c04e3269" x="186" y="30" width="314" height="20"/>
+				<textElement/>
+				<text><![CDATA[,]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="f5f8240e-596a-4627-8a61-4f774de9a5f8" x="0" y="100" width="120" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{direccion_comunidad}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="ed350689-0399-4600-ae7e-43fc1c73de43" x="0" y="60" width="340" height="37"/>
+				<textElement/>
+				<text><![CDATA[						CERTIFICA
+
+En la Junta General celebrada por ?sta la comunidad de Propietarios]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="12eb8698-e53b-41f6-9a58-292dbe9be2bf" x="120" y="100" width="35" height="20"/>
+				<textElement/>
+				<text><![CDATA[, de]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="cef20a7f-3f70-48f7-bc49-48be118fdc3a" x="0" y="140" width="571" height="30"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{texto_libre_juntas}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="eae900b7-9de1-4a95-8850-9815a7f4be88" x="0" y="120" width="571" height="20"/>
+				<textElement/>
+				<text><![CDATA[junta de acuerdo de morosos, entre otras cosas se aprob?:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="957df69f-1364-4ecb-a41e-d631163f3753" x="160" y="100" width="70" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ciudad_comunidad}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="1e4b6eb5-7009-4390-baec-e3330bcc8a88" x="0" y="10" width="500" height="20"/>
+				<textElement/>
+				<text><![CDATA[D/D?. ADMINISTRADOR/RA, en funci?n de secretar?a-administradora de la Comunidad de Propietarios]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="077c6d60-0ac0-4ba6-abfb-f00fa8a82290" x="380" y="170" width="65" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ciudad_comunidad}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="22938059-276a-45b9-b022-5846efc520d0" x="350" y="80" width="90" height="17"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_comunidad}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="cd5c8ed1-0e20-4036-b2dd-0523dd7bcf60" x="-1" y="220" width="572" height="20"/>
+				<textElement/>
+				<text><![CDATA[V?B? Sr. Presidente						Fdo.]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="b80c3db0-7824-46c4-8462-6c6be5e388fd" x="0" y="30" width="180" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_comunidad}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="95f6e032-4d3e-47ae-8a1d-bf60ff9aee71" x="460" y="100" width="111" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha_celebracion_juntas}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="c558439f-15b6-413e-9104-e645c99b2035" x="0" y="170" width="380" height="20"/>
+				<textElement/>
+				<text><![CDATA[Para que conste y surta los efectos oportunos firmo el presente certificado en]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bed77cda-bb6d-4ba3-9d82-822a64f19ae5" x="445" y="170" width="70" height="20"/>
+				<textElement/>
+				<text><![CDATA[ a fecha de ]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="c8a865ee-06c0-4fb1-827a-439fb102bc14" x="0" y="190" width="132" height="30"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha_celebracion_juntas}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="b9f08bef-ec0b-4576-ba43-bb73e1eabcc3" x="230" y="100" width="230" height="20"/>
+				<textElement/>
+				<text><![CDATA[, en la junta general ordinaria celebrada el d?a]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="2cbf2ff5-d892-4d29-859f-7b880f081739" x="27" y="266" width="243" height="30"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{admin_comunidad}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="3761daa1-12cd-41cb-b7e6-22e5b9e0a6af" x="280" y="266" width="153" height="30"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{presi_comunidad}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="d07c5b76-d49c-431a-aa7b-b00d6d0ac792" x="280" y="246" width="153" height="20"/>
+				<textElement/>
+				<text><![CDATA[Presidente de la comunidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="55ecbc1c-8384-4db9-b36b-5fe9a19e6119" x="27" y="246" width="243" height="20"/>
+				<textElement/>
+				<text><![CDATA[Administrador de la comunidad]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>
