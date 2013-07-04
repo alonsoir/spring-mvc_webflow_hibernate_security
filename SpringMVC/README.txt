@@ -1,3 +1,5 @@
+a development diary, sorry for the spanish, i was born in badajoz, spain in 1977, by the way :)
+
 30 de mayo 2013
 
 a dia de hoy, los flujos estan definidos en fincas-morosas-flow.xml, hay daos y servicio de comunidades, 
@@ -115,7 +117,7 @@ resolver las dependencias, ahora lo tienes roto.. HECHO
   
 Necesitas que se vean las imagenes! has modificado cosas en el applicationContext, pero aun nada
 
-Necesitas validacion de los campos, que tengan el tama–o adecuado por ejemplo! HECHO!
+Necesitas validacion de los campos, que tengan el tamaï¿½o adecuado por ejemplo! HECHO!
 
 hoy ya tienes un servicio que hace la generacion de un pdf, ahora tienes hardcodeado el idDeuda necesario para generar el pdf.
 Necesito poder pasar el idDeuda entre los flujos, para ello tienes que ver bien esto:
@@ -124,7 +126,7 @@ http://static.springsource.org/spring-webflow/docs/2.0.x/reference/html/ch03s05.
 
 OJITO Cuando se genera el pdf, te esta dando un error Exception in thread "AWT-EventQueue-0" java.lang.OutOfMemoryError: PermGen space -Xmx1024M?
 como se lo paso a maven? o al jetty?
-igual se arregla dando mas memoria, -Xmx1024M. En ppio lo has solucionado a–adiendo la entrada siguiente:
+igual se arregla dando mas memoria, -Xmx1024M. En ppio lo has solucionado aï¿½adiendo la entrada siguiente:
 
 MAVEN_OPTS=-server -XX:MaxPermSize=512M -ms1024M -mx1024M -XX:AppendRatio=3
 export MAVEN_OPTS
@@ -138,7 +140,7 @@ vecinos, sale un null, igual tienes que modificar la plantilla, ojito cuando la 
 
 10 de junio
 has modificado la plantilla para la fecha la tome como una cadena, en el pojo juntas has modificado tambien la fecha
-para qe sea una cadena. tienes que a–adir usuarios  a las tablas del esquema de seguridad, tienes pojos para asegurarte de no
+para qe sea una cadena. tienes que aï¿½adir usuarios  a las tablas del esquema de seguridad, tienes pojos para asegurarte de no
 perderlo nunca, en ppio no tienes que modificar o crear ningun dao para esta seguridad, te vale ese esquema. Necesitas
 hacer algo con la pantalla de login, ahora el loginid forma parte de comunidadvecinos, para saber cuales pertenecen
 a cual, de forma que tendras que pasar el user logado para crear la comunidad, haz que ese campo sea obligatorio a nivel de
@@ -192,9 +194,9 @@ Estas intentando traer los datos de los morosos antes de hacer la insercion, pq 
 	at java.lang.String.valueOf(String.java:2826)
 	at java.lang.StringBuilder.append(StringBuilder.java:115)
 	
- eso es que me he pasado de los 128 kb del tama–o del heap, o lo aumentas o te lees esto antes:
+ eso es que me he pasado de los 128 kb del tamaï¿½o del heap, o lo aumentas o te lees esto antes:
  
- http://stackoverflow.com/questions/860550/stack-overflows-from-deep-recursion-in-java En principio lo has resuelto aunmentando el tama–o del heap
+ http://stackoverflow.com/questions/860550/stack-overflows-from-deep-recursion-in-java En principio lo has resuelto aunmentando el tamaï¿½o del heap
  y cambiando el metodo toString en los pojos, no has puesto las referencias a los objetos foraneos, de forma que no habra recursion profunda y el pete no
  deberia salir mas!
  
@@ -205,18 +207,18 @@ Estas intentando traer los datos de los morosos antes de hacer la insercion, pq 
   de validate a crete-drop. No veo porque esta ocurriendo la excepcion, se que es por la restriccion de unicidad, que salta cuando intento insertar algo 
   ya existente, que esta ocurriendo cuando busco por el identificador refCatastral que es unique? hasta que no tengas el entorno para el debug no avanzaras nada.
   
-entorno debug para junit a–adido
+entorno debug para junit aï¿½adido
 
-Voy a a a–adir soporte para que no se puedan insertar duplicados en comunidadvecinos. OK. en ppio lo has hecho siguiendo la tecnica de crear un criterion,
+Voy a a aï¿½adir soporte para que no se puedan insertar duplicados en comunidadvecinos. OK. en ppio lo has hecho siguiendo la tecnica de crear un criterion,
 asi podre invocar este metodo para saber mediante ajax si la entidad existe en el sistema! 
 Tienes que hacer lo mismo para morosos, crear un metodo en el dao para que acepte un criterion OK ahora 
 
 18 de junio
 Tienes que hacer que se muestre el pdf generado por el cliente al solicitar la contratacion de jorge. 
-Tienes que hacer la consulta necesaria para la pagina de certificados, te bastar‡ con la consulta que haces para generar el primer certificado, con eso mostraras
+Tienes que hacer la consulta necesaria para la pagina de certificados, te bastarï¿½ con la consulta que haces para generar el primer certificado, con eso mostraras
 un resumen de la informacion que has introducido anteriormente. Una vez tengas eso, la accion de contratar con el despacho debe lanzar las siguientes acciones:
 
-generar el certificado, en pdf, doc y html. El html es el que debes de mostrar al cliente en una pesta–a siguiente. El pdf a lo mejor sobra, y el doc se va
+generar el certificado, en pdf, doc y html. El html es el que debes de mostrar al cliente en una pestaï¿½a siguiente. El pdf a lo mejor sobra, y el doc se va
 a indexar.
 
 Se va a generar en bd una entidad Demanda, asociada al caso del cliente. DEFINIR mas esto
@@ -276,7 +278,7 @@ acuerdate de lanzar esto cada vez que empieces a desarrollar. Esto cuando lo sub
 tomcat, que no deja de ser un contenedor de servlets
 
 
-Que pasa cuando intentas modificar un moroso existente? o una comunidad? es decir, introduces los datos de por ejemplo una comunidad, Žsta tiene
+Que pasa cuando intentas modificar un moroso existente? o una comunidad? es decir, introduces los datos de por ejemplo una comunidad, ï¿½sta tiene
 como atributos unicos la direccion y la referencia catastral, si introduces alguno que ya existe, que haces? como poco avisar! y decirle que debe cambiarlo, 
 no hay que dejarle avanzar hasta que introduzca datos nuevos. Para hoy debes tener modificado el servicio de comunidades y la jsp para que no ocurra mas.
 
@@ -317,7 +319,7 @@ WHERE D.IDDEMANDA=H.DEMANDA_IDDEMANDA AND
 	  U.username='alonsoir'
  
  Ahora estas mostrando esto para los clientes de rol finca... son las demandas asociadas al cliente, es decir, un cliente con el rol fincas ha completado
- estas tratando de usar una tabla que me provea paginacion, he modificado index1.jsp y header.jsp asi como a–adido ficheros a WEB-INF/css/, WEB-INF/js
+ estas tratando de usar una tabla que me provea paginacion, he modificado index1.jsp y header.jsp asi como aï¿½adido ficheros a WEB-INF/css/, WEB-INF/js
  y WEB-INF/images y no se porque pero el dispatcherServlet no los esta procesando, por lo que chungo, lo suyo es poner todos estos ficheros para que los gestione
  apache web server.
  Tambien debes hacer que lo que debe ver el usuario es el fichero .html que hemos generado!!!! para ello debes hacer un servlet que devuelva este fichero. 
@@ -363,9 +365,9 @@ recuerda, esto siempre antes de empezar a desarrollar y por supuesto que estos v
 MAVEN_OPTS="-server -XX:MaxPermSize=512M -ms1024M -mx1024M"
 export MAVEN_OPTS
 
-PARA MA„ANA TIENES QUE HACER LO NECESARIO PARA QUE LA PAGINACION FUNCIONE ADECUADAMENTE, 
+PARA MAï¿½ANA TIENES QUE HACER LO NECESARIO PARA QUE LA PAGINACION FUNCIONE ADECUADAMENTE, 
 esta cargando adecuadamente la libreria js? por lo menos carga adecuadamente las imagenes! algo es algo! que esta pasando
-con la libreria javascript? si no me funcione, encontrarŽ un CDN que aloje las librerias js y css necesarias! DONE
+con la libreria javascript? si no me funcione, encontrarï¿½ un CDN que aloje las librerias js y css necesarias! DONE
 esta es la libreria q estas usando, y estas usando el cdn de microsoft
 http://www.datatables.net/release-datatables/examples/basic_init/zero_config.html DONE ya hay paginacion, faltaria habilitar la busqueda que proporciona
 el plugin
@@ -373,7 +375,7 @@ el plugin
 3 de julio
 
 
-Has habilitado la seguridad por servicios, ahora en ppio solo alguien con el ROL adecuado podr‡ ejecutar 
+Has habilitado la seguridad por servicios, ahora en ppio solo alguien con el ROL adecuado podrï¿½ ejecutar 
 esa accion del servicio, tambien tienes una pagina 403 para los forbidden y has mejorado el header para que se muestre
 adecuadamente los login o logout 
 
@@ -382,7 +384,7 @@ Ahora jorge quiere tambien que un administrador de fincas pueda consultar y modi
 
 	ComunidadVecinos, Morosos, juntas y fincas morosas! mas madera! PENDIENTE
 	
-Ademas de la pagina para Žl en la que debe asignar un abogado a la demanda. Algo mas? PENDIENTE
+Ademas de la pagina para ï¿½l en la que debe asignar un abogado a la demanda. Algo mas? PENDIENTE
 jorge quiere que salga tambien la ciudad de la comunidad DONE, tlf movil y fijo del moroso DONE 
 
 tienes que hacer que la refcatastral en comunidadvecinos sea nullable, habra q cambiar el pojo y quitar la validacion
