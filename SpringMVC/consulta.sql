@@ -1,3 +1,5 @@
+#a nice sentence :)
+
 select mor.cp as CP_MOROSO, 
        mor.direccion as DIRECCION_MOROSO,
        mor.nifcif as NIFCIF_MOROSO,
