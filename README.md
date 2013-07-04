@@ -27,4 +27,11 @@ slf4jVersion : 1.7.5
 create database with proper name, update hibernate.properties with user, pass and url, then launch mvn clean install tomcat7:run
 you should see login form in http://localhost:8080/SpringMVC/login.
 
-Next is to update user and roles on database, so you may modify 
+Next is to update user and roles on database, so you may modify security.sql for your convenience and launch the sentence
+using something like pgAdmin or phpmyadmin. Next you can login on system. You can save data, iterate over the flow, 
+generate a document using a jaspersoft tecnologies, then you can see the flow and see in a cool table a resume of 
+generated data, included a link in order to see generated document.
+thats all for now, enjoy and have fun!
+
+If you need some help, keep me in touch
+
