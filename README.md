@@ -24,4 +24,7 @@ groovy.version : 1.8.6
 junit.version : 4.8.2
 slf4jVersion : 1.7.5
 
+create database with proper name, update hibernate.properties with user, pass and url, then launch mvn clean install tomcat7:run
+you should see login form in http://localhost:8080/SpringMVC/login.
 
+Next is to update user and roles on database, so you may modify 
