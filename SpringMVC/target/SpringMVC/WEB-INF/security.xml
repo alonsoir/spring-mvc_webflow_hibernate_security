@@ -1,0 +1,62 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/security
+       http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+
+	<global-method-security secured-annotations="enabled" jsr250-annotations="enabled"/>
+
+	<http auto-config='true'>
+		<intercept-url pattern="/j_spring_security_login" access="IS_AUTHENTICATED_ANONYMOUSLY" requires-channel="any"/>
+		<intercept-url pattern="/j_spring_security_check" access="IS_AUTHENTICATED_ANONYMOUSLY" requires-channel="any"/>
+		<intercept-url pattern="/flows**" access="ROLE_FINCA,ROLE_ADMIN" requires-channel="any"/>
+		<intercept-url pattern="/favicon.ico" access="ROLE_ANONYMOUS" />
+		<intercept-url pattern="/resources/**" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+		<intercept-url pattern="/files/*" access="ROLE_FINCA,ROLE_ABOGADO,ROLE_ADMIN" requires-channel="any"/>
+		<access-denied-handler ref="accessDeniedHandler"/>
+		<!-- 
+		/flows esta definido en el mvc-dispatcher-servlet, como la propiedad mappings del
+		org.springframework.web.servlet.handler.SimpleUrlHandlerMapping
+		-->
+		<form-login login-page="/login" default-target-url="/flows" authentication-failure-url="/loginfailed"/>
+		<logout logout-success-url="/logout" />
+		<session-management invalid-session-url="/invalidSession.htm" />
+		<remember-me />
+		<!-- solo una sesion concurrente por cliente buscar Session Fixation Attack Protection-->
+		<session-management session-fixation-protection="newSession">
+        	<concurrency-control max-sessions="1" error-if-maximum-exceeded="true" />
+    	</session-management>
+	</http>
+	<!-- no te está funcionando la validacion con este encoder! -->
+	<beans:bean id="encoder" class="org.springframework.security.crypto.password.StandardPasswordEncoder"/>
+	<authentication-manager>
+        <authentication-provider>
+        	<password-encoder hash="sha-256" />
+			<jdbc-user-service data-source-ref="dataSource"
+		   					   users-by-username-query=
+		   					   "select username,password, enabled 
+		   					    from users 
+		   					    where username=?" 
+ 
+		   						authorities-by-username-query=
+		   						"select u.username, ur.authority 
+		   						 from users u, user_roles ur 
+		   						 where u.user_id = ur.user_user_id and u.username =?  "/>        
+		</authentication-provider>
+    </authentication-manager>
+<!--  
+    
+	<authentication-manager>
+		<authentication-provider user-service-ref='myOwnUserDetailsService' />
+	</authentication-manager>
+
+	<beans:bean id="myOwnUserDetailsService"
+		class="org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl">
+		<beans:property name="dataSource" ref="dataSource" />
+		<beans:property name="enableGroups" value="true"/>
+  		<beans:property name="enableAuthorities" value="true"/>
+	</beans:bean>
+-->    
+
+</beans:beans>

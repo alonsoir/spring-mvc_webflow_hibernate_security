@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<webflow-project-description>
+	<version>1</version>
+	<pluginVersion><![CDATA[3.2.0.201303060654-RELEASE]]></pluginVersion>
+	<configs>
+		<config>
+			<file>src/main/webapp/WEB-INF/flows/Copy of helloworldflow.xml</file>
+			<name><![CDATA[Copy of helloworldflow]]></name>
+		</config>
+		<config>
+			<file>target/SpringMVC/WEB-INF/flows/Copy of helloworldflow.xml</file>
+			<name><![CDATA[Copy of helloworldflow]]></name>
+		</config>
+		<config>
+			<file>src/main/webapp/WEB-INF/flows/fincas-morosas-flow.xml</file>
+			<name><![CDATA[fincas-morosas-flow]]></name>
+		</config>
+		<config>
+			<file>target/SpringMVC/WEB-INF/flows/fincas-morosas-flow.xml</file>
+			<name><![CDATA[fincas-morosas-flow]]></name>
+		</config>
+	</configs>
+</webflow-project-description>

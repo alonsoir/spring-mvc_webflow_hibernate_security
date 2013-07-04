@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow 
+    					http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<var name="pojoComunidades" class="com.aironman.core.pojos.ComunidadVecinos" />
+	<var name="pojoFincas" class="com.aironman.core.pojos.ViviendasConDeudas" />
+	<var name="pojoMorosos" class="com.aironman.core.pojos.Moroso" />
+	<var name="pojoJuntas" class="com.aironman.core.pojos.JuntasOrdinarias" />
+	<var name="pojoViviendas" class="com.aironman.core.pojos.ViviendasConDeudas" />
+	<var name="pojoUsers" class="com.aironman.core.pojos.Users"/>
+	
+	
+	<!-- 
+	como lo quieres tener a dia de hoy, la razon es que comunidades tiene una fk a juntas, asi es mas sencillo y eficiente, solo se hacen inserts o updates
+	juntas -> Comunidades -> moroso -> fincasmorosas -> certificados
+	-->
+	<view-state id="index1">
+		<on-render>
+			<evaluate expression="despachoService.traerCertificadosAsociadoConDemanda(currentUser.name)" result="flowScope.listaCertificados"/>
+		</on-render>
+		<transition on="start" to="juntas" />
+	</view-state>
+
+	<!-- primer paso del flujo, comunidades de vecinos -->
+	<view-state id="juntas" model="pojoJuntas">
+		<binder>
+			<binding property="fechaCelebracion" required="true"/>
+			<binding property="textoLibre" required="true"/>
+		</binder>
+		<transition on="guardarJunta" to="addJuntaAction" validate="true" />
+		<transition on="avanzarAComunidades" to="comunidades" validate="false"/>
+		<transition on="inicio" to="index1" validate="false" />
+	</view-state>
+
+	<action-state id="addJuntaAction">
+		<evaluate expression="juntasOrdinariasService.addJuntasOrdinarias(pojoJuntas)" result="flowScope.mensajeJuntas"/>
+		<transition to="juntas" />
+	</action-state>
+
+	<!-- segundo paso del flujo -->
+
+	<view-state id="comunidades" model="pojoComunidades">
+		<binder>
+			<binding property="refCatastral" required="false"/>
+			<binding property="ciudad" required="true"/>
+			<binding property="cp" required="true"/>
+			<binding property="nombreComunidad" required="true"/>
+			<binding property="direccion" required="true"/>
+			<binding property="presidenteCC" required="true"/>
+			<binding property="administradorFincas" required="true"/>
+		</binder>
+		<transition on="volverAJuntas" to="juntas" validate="false" />
+		<transition on="guardarComunidad" to="addComunidadAction"
+			validate="true" />
+		<transition on="traerComunidad" to="getComunidadAction" validate="false"/>
+		<transition on="avanzaAMorosos" to="morosos" />
+	</view-state>
+
+	<action-state id="getComunidadAction">
+		<evaluate
+			expression="comunidadService.getComunidadVecinosByCriterion(pojoComunidades.refCatastral,pojoComunidades.direccion)"
+			result="flowScope.pojoComunidades" />
+		<transition to="comunidades" />
+	</action-state>
+
+	<action-state id="addComunidadAction">
+		<evaluate expression="comunidadService.addComunidadVecinos(pojoComunidades,pojoJuntas,pojoUsers,currentUser.name)" 
+				  result="flowScope.mensajeComunidades"/>
+		<transition to="comunidades" />
+	</action-state>
+
+	<!-- tercer paso del flujo -->
+
+	<view-state id="morosos" model="pojoMorosos">
+		<binder>
+			<binding property="nifCif" required="true"/>
+			<binding property="tlf" required="true"/>
+			<binding property="cp" required="true"/>
+			<binding property="nombreCompleto" required="true"/>
+			<binding property="ciudad" required="true"/>
+			<binding property="direccionMoroso" required="true"/>
+		</binder>
+	
+		<transition on="guardarMoroso" to="addMorosoAction" validate="true" />
+		
+		<transition on="avanzarAFincas" to="fincasmorosas" />
+		<transition on="volverAComunidades" to="comunidades" />
+	</view-state>
+
+	<action-state id="addMorosoAction">
+		<evaluate expression="morososService.addMoroso(pojoMorosos)" result="flowScope.mensajeMoroso"/>
+		<transition to="morosos" />
+	</action-state>
+
+	<!-- cuarto paso del flujo -->
+	<view-state id="fincasmorosas" model="pojoFincas">
+		<binder>
+			<binding property="montante" required="true"/>
+			<binding property="direccionViviendaDeudora" required="true"/>
+			<binding property="tipo" required="true"/>
+			<binding property="textoLibreViviendasConDeudas" required="true"/>
+		</binder>
+		<transition on="guardarFinca" to="addFincaAction" validate="true" />
+		<transition on="volverAMoroso" to="morosos" />
+		<transition on="avanzarACertificados" to="certificados" validate="false"/>
+	</view-state>
+
+<!-- el metodo  fincasMorosasService.addViviendasConDeudas devuelve el id de la tupla generada en bd. Lo haces asi
+porque quieres que ese id sea lo necesario para generar el documento que se genera mediante 
+la llamada a certificadosService.generarCertificadoCelebracionJunta(IDENTIFICADOR que se calcula mediante la accion addFincaAction)
+-->
+	<action-state id="addFincaAction">
+		<evaluate expression="fincasMorosasService.addViviendasConDeudas(pojoFincas,pojoComunidades,pojoMorosos)" result="conversationScope.idDeuda"/>
+		<transition to="fincasmorosas" />
+	</action-state>
+	
+	
+	<!-- quinto paso del flujo y ultimo en ppio -->
+	
+	<view-state id="certificados" model="pojoViviendas">
+		<on-render>
+        	<evaluate expression="despachoService.traerInfoParaCertificado(conversationScope.idDeuda,currentUser.name)"
+                  result="viewScope.infoCertificado" />
+    	</on-render>
+		<transition on="acabarProcesoCertificado1" to="fin" />
+		<transition on="volverAFincasMorosas" to="fincasmorosas" />
+		<transition on="contactarDespacho" to="contactarDespachoAction"/>
+	</view-state>
+
+<!-- TIENES QUE DEFINIR MAS que va a hacer esta action -->
+	<action-state id="contactarDespachoAction">
+		<evaluate expression="despachoService.generarCertificadoYCrearDemanda(conversationScope.idDeuda,currentUser.name)" 
+				  result="flowScope.mensajeCertificado"/>
+		<transition to="certificados" />
+	</action-state>
+
+	<end-state id="fin" />
+
+</flow>

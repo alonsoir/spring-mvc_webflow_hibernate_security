@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5">
+	<display-name>Fincas Morosas</display-name>
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+				/WEB-INF/mvc-dispatcher-servlet.xml
+				/WEB-INF/applicationContext-services.xml
+				/WEB-INF/security.xml
+		</param-value>
+	</context-param>
+
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+<!-- Concurrent Session Control por spring -->
+	<listener>
+    	<listener-class>
+      		org.springframework.security.web.session.HttpSessionEventPublisher
+    	</listener-class>
+  	</listener>
+  
+	<servlet>
+		<servlet-name>mvc-dispatcher</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>mvc-dispatcher</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+
+	<!-- Spring Security --> 
+	<filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+<!-- para gestionar los errores de tipo throwable, es decir, todas las excepciones que lance la capa de daos
+	 OJITO QUE AUN no tienes nada hecho que atienda esta peticion gestionErrores.do , ni sabes que quieres que haga
+	<error-page>
+      <exception-type>java.lang.Throwable</exception-type>
+      <location>/gestionErrores.do</location>
+	</error-page>
+-->
+</web-app>
