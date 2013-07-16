@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -45,15 +46,16 @@ public class Demandas implements java.io.Serializable {
 	@Column(name = "FECHAFIN", nullable = true)
 	private Date fechaFin;
 
-	@OneToMany(mappedBy = "demanda")
+	@OneToMany(mappedBy = "demanda", cascade = CascadeType.ALL)
 	private Collection<HistoricoDemandasViviendasAdeudadas> historicoDemanda = new ArrayList<HistoricoDemandasViviendasAdeudadas>();
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	// el abogado que tiene asignado esta demanda
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Abogados abogado;
 
 	// es el usuario logado en el sistema, el usuario que quiere contratar a
 	// jorge para llevar esta demanda
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Users usuario;
 
 	public Long getIdDemanda() {

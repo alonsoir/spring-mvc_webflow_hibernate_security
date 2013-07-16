@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.aironman.core.pojos.CertificadosServiceResponse;
 import com.aironman.core.pojos.DatosDemanda;
 import com.aironman.core.service.CertificadosService;
 
@@ -37,10 +38,15 @@ public class CertificadosServiceTest {
 
 		String username = "alonsoir";
 		Long idDeuda = 1l;
-		String retorno = certificadosService
+		CertificadosServiceResponse retorno = certificadosService
 				.generarCertificadoCelebracionJunta(idDeuda, username);
 		LOG.info("testGenerarCertificadoCelebracionJunta: " + retorno);
 		Assert.assertNotNull(retorno);
+		Assert.assertTrue(retorno.getEstado());
+		Assert.assertNotNull(retorno.getMensaje());
+		Assert.assertNotNull(retorno.getRutaDoc());
+		Assert.assertNotNull(retorno.getRutaHtml());
+		Assert.assertNotNull(retorno.getRutaPdf());
 	}
 
 	@Test

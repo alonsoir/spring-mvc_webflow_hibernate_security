@@ -1,5 +1,7 @@
 package com.aironman.core.test;
 
+import java.util.List;
+
 import junit.framework.Assert;
 
 import org.junit.After;
@@ -11,7 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.aironman.core.pojos.DatosAbogado;
+import com.aironman.core.pojos.DatosDemandaAdmin;
 import com.aironman.core.pojos.InfoCertificadoDeuda;
+import com.aironman.core.pojos.ServiceResponse;
 import com.aironman.core.service.DespachoService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -31,12 +36,13 @@ public class DespachosServiceTest {
 	}
 
 	@Test
-	public void testgenerarCertificadoCelebracionJunta() {
+	public void testgenerarCertificadoYCrearDemanda() {
 		Long idDeuda = 1l;
 		String username = "alonsoir";
-		String rutaFisicaDemanda = despachoService
+		ServiceResponse serviceResponse = despachoService
 				.generarCertificadoYCrearDemanda(idDeuda, username);
-		Assert.assertNotNull(rutaFisicaDemanda);
+		Assert.assertNotNull(serviceResponse.getMensaje());
+		Assert.assertTrue(serviceResponse.getEstado());
 	}
 
 	@Test
@@ -48,5 +54,22 @@ public class DespachosServiceTest {
 				idDeuda, username); //
 		LOG.info(info.toString());
 		Assert.assertNotNull(info);
+	}
+
+	@Test
+	public void testtraerCertificadosAdmin() {
+		// esto esta fallando ahora!!
+		List<DatosDemandaAdmin> lista = despachoService
+				.traerCertificadosAdmin();
+		Assert.assertNotNull(lista);
+		Assert.assertTrue(lista.size() > 0);
+	}
+
+	@Test
+	public void testtraerAbogadosDisponibles() {
+
+		List<DatosAbogado> lista = despachoService.traerAbogadosDisponibles();
+		Assert.assertNotNull(lista);
+		Assert.assertTrue(lista.size() > 0);
 	}
 }

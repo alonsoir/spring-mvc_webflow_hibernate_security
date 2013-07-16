@@ -27,14 +27,21 @@ import net.sf.jasperreports.engine.export.ooxml.JRDocxExporterParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.aironman.core.configuration.CertificadosBean;
 import com.aironman.core.configuration.CertificadosPropertiesConfig;
+import com.aironman.core.pojos.CertificadosServiceResponse;
+import com.aironman.core.pojos.DatosAbogado;
 import com.aironman.core.pojos.DatosDemanda;
+import com.aironman.core.pojos.DatosDemandaAdmin;
 import com.aironman.core.pojos.InfoCertificadoDeuda;
 
+/*
+ * prefiero generar la consulta usando jdbc, tengo mas control que con hql
+ * **/
 @Service("certificadosService")
 @Transactional(readOnly = true)
 public class CertificadosServiceImpl implements CertificadosService {
@@ -42,11 +49,15 @@ public class CertificadosServiceImpl implements CertificadosService {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(CertificadosServiceImpl.class);
 
+	// estas dos consultas don para los administradores de fincas. Esta es para
+	// el ultimo paso, el de los certificados cuando hay que mostrar un
+	// Resumen de lo que ha introducido en el sistema.
 	private static String SQL_CERTIFICADO_USER_IDDEUDA = "select mor.cp as CP_MOROSO,"
 			+ "mor.direccion as DIRECCION_MOROSO,"
 			+ "mor.nifcif as NIFCIF_MOROSO,"
 			+ "mor.nombre AS NOMBRE_MOROSO,"
-			+ "mor.telefono AS TLF_MOROSO,"
+			+ "mor.tlf_fijo AS TLF_FIJO_MOROSO,"
+			+ "mor.tlf_movil AS TLF_MOVIL_MOROSO,"
 			+ "mor.ciudad AS CIUDAD_MOROSO,"
 			+ "comunidad.ciudad AS CIUDAD_COMUNIDAD,"
 			+ "comunidad.nombrecomunidad AS NOMBRE_COMUNIDAD,"
@@ -62,6 +73,9 @@ public class CertificadosServiceImpl implements CertificadosService {
 			+ "mor.idmoroso = vivi.moroso_idmoroso                   AND "
 			+ "u.username= ?								AND " + "vivi.iddeuda= ?";
 
+	// estas consulta es para los administradores de fincas. Esta en concreto es
+	// para mostrar al admin fincas en la pantalla index1 una tabla con
+	// los certificados generados
 	private static String SQL_CERTIFICADO_USER_ONLY = "SELECT VIV.montante as MONTANTE, "
 			+ "H.RUTAFISICADEMANDA AS URL_CERTIFICADO, "
 			+ " U.USERNAME as usuario, MOR.nombre as nombre_moroso, "
@@ -85,6 +99,28 @@ public class CertificadosServiceImpl implements CertificadosService {
 			+ "AND D.iddemanda = H.demanda_iddemanda "
 			+ "AND H.deudora_iddeuda=VIV.IDDEUDA " + "AND U.username=?;";
 
+	private static String SQL_ABOGADOS_DISPONIBLES = "select a.idabogado, a.nombre, a.apellidos, a.tlf, a.ciudad, a.cp, a.direccion "
+			+ "from abogados a,users u, user_roles ur "
+			+ "where a.usuario_user_id=u.user_id "
+			+ "	and u.user_id = ur.user_user_id; ";
+
+	private static String SQL_CERTIFICADOS_ENTRANTES_ONLY_ADMIN = "select viv.montante as montante, "
+			+ "h.rutafisicademanda as rutacertificado, "
+			+ "viv.direccion_viv_deudora as direccion_vivienda, "
+			+ "mor.nombre as nombre_moroso, "
+			+ "mor.tlf_fijo as telefonofijo_moroso, "
+			+ "mor.tlf_movil as tlf_movil, "
+			+ "d.fechainicio as fechainiciodemanda ,"
+			+ "d.tipo as estado_demanda, "
+			+ "u.username as cliente_admin_fincas, "
+			+ "d.iddemanda as iddemanda "
+			+ "from demandas d, historico_demandas_viviendas h,viviendascondeudas viv,comunidadvecinos com,moroso mor,users u "
+			+ "where d.iddemanda = h.demanda_iddemanda "
+			+ "AND viv.iddeuda=h.deudora_iddeuda "
+			+ "AND viv.comunidad_idcomunidad=com.idcomunidad "
+			+ "AND viv.moroso_idmoroso = mor.idmoroso "
+			+ "AND d.usuario_user_id = u.user_id";
+
 	private static final String PREFIJO_NOMBRE_CERTIFICADO = "certificadoDeuda-";
 	private static final String SUFIJO_NOMBRE_CERTIFICADO_PDF = ".pdf";
 	private static final String SUFIJO_NOMBRE_CERTIFICADO_DOC = ".doc";
@@ -99,13 +135,13 @@ public class CertificadosServiceImpl implements CertificadosService {
 	private CertificadosPropertiesConfig certificadosProperties;
 
 	@PostConstruct
-	public void initService() {
+	public void initService() throws Exception {
 
 		LOG.info("CertificadosServiceImpl.initService. Inicializando plantilla...");
 		CertificadosBean beanProperties = certificadosProperties
 				.getCertificadosProperties();
 
-		LOG.info("beanProperties: " + beanProperties.toString());
+		// LOG.info("beanProperties: " + beanProperties.toString());
 
 		String rutaPlantilla = beanProperties.getRUTA_PLANTILLA();
 
@@ -114,24 +150,28 @@ public class CertificadosServiceImpl implements CertificadosService {
 			LOG.info("Plantilla compilada...");
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
-			LOG.info("ATENCION! No ha sido posible compilar la plantilla.", e);
+			LOG.info(
+					"ATENCION! PROBLEMA!!! No ha sido posible compilar la plantilla.",
+					e);
+			throw e;
 		}
 
 	}
 
 	@Override
-	public String generarCertificadoCelebracionJunta(Long idDeuda,
-			String username) {
+	public CertificadosServiceResponse generarCertificadoCelebracionJunta(
+			Long idDeuda, String username) {
 
-		// TODO esto es mierda, devolviendo en caso de error una cadena con
-		// ERROR!! puedes mejorar esto...
+		CertificadosServiceResponse response = new CertificadosServiceResponse();
 		if (idDeuda == null) {
 			LOG.info("CertificadosServiceImpl.generarCertificadoCelebracionJunta. idDeuda no puede ser nulo para generar el certificado!.");
-			return "ERROR idDeuda no puede ser nulo para generar el certificado.";
+			response.setEstado(Boolean.FALSE);
+			response.setMensaje("ATENCION!! Debes completar todos los pasos anteriores asegurandote de guardar para que se pueda generar el certificado.");
+			return response;
 		}
 		CertificadosBean beanProperties = certificadosProperties
 				.getCertificadosProperties();
-		LOG.info("beanProperties: " + beanProperties.toString());
+		// LOG.info("beanProperties: " + beanProperties.toString());
 
 		String dirDespliegue = beanProperties.getDIRECTORIO_DESPLIEGUE().trim();
 		String rutaConexiondb = beanProperties.getRUTA_CONEXION_DB().trim();
@@ -146,10 +186,6 @@ public class CertificadosServiceImpl implements CertificadosService {
 		StringBuilder sbHtml = new StringBuilder();
 		StringBuilder sbPdfSinRuta = new StringBuilder();
 		try {
-			LOG.info("rutaConexiondb: " + rutaConexiondb);
-			LOG.info("userdb: " + userdb);
-			LOG.info("passdb: " + passdb);
-
 			conn = DriverManager.getConnection(rutaConexiondb, userdb, passdb);
 			conn.setAutoCommit(false);
 
@@ -213,16 +249,28 @@ public class CertificadosServiceImpl implements CertificadosService {
 
 			os.close();
 
-			LOG.info("Se deberia haber generado el pdf en " + sbPdf.toString());
+			response.setEstado(Boolean.TRUE);
+			response.setMensaje("Se ha generado correctamente el certificado.");
+
+			LOG.info("Se deberia haber generado el pdf en " + sbPdf.toString()
+					+ " Seteo el nombre del pdf sin la ruta! "
+					+ sbPdfSinRuta.toString());
+			response.setRutaPdf(sbPdfSinRuta.toString());
 
 			LOG.info("Se deberia haber generado el doc en " + sbDoc.toString());
+			response.setRutaDoc(sbDoc.toString());
 
 			LOG.info("Se deberia haber generado el HTML en "
 					+ sbHtml.toString());
+			response.setRutaHtml(sbHtml.toString());
 
 		} catch (Exception e) {
 			LOG.info("ERROR al conectar con la bd para generar el pdf. ", e);
-			return "ERROR al conectar con la bd para generar el pdf. ";
+
+			response.setEstado(Boolean.FALSE);
+			response.setMensaje("ERROR al conectar con la bd para generar el pdf.");
+
+			return response;
 		} finally {
 			/*
 			 * Cleanup antes de salir
@@ -239,13 +287,16 @@ public class CertificadosServiceImpl implements CertificadosService {
 				LOG.info(
 						"ERROR al cerrar la conexion con la bd al cerrar la conexion. ",
 						e);
-				return "ERROR al cerrar la conexion con la bd al cerrar la conexion";
+				response.setEstado(Boolean.FALSE);
+				response.setMensaje("ERROR al cerrar la conexion con la bd al cerrar la conexion");
+
+				return response;
 			}
 		}
 		// ruta fisica de despliegue del certificado en .HTML. Igual debo crear
 		// un pojo que contenga todas las rutas fisicas generadas
 		// DEBERIA DEVOLVER TODO EN UN POJO?
-		return sbPdfSinRuta.toString();
+		return response;
 	}
 
 	@Override
@@ -265,7 +316,7 @@ public class CertificadosServiceImpl implements CertificadosService {
 			CertificadosBean beanProperties = certificadosProperties
 					.getCertificadosProperties();
 
-			LOG.info("beanProperties: " + beanProperties.toString());
+			// LOG.info("beanProperties: " + beanProperties.toString());
 
 			String rutaConexiondb = beanProperties.getRUTA_CONEXION_DB().trim();
 			String passdb = beanProperties.getPASS_DB().trim();
@@ -284,7 +335,8 @@ public class CertificadosServiceImpl implements CertificadosService {
 				String direccionMoroso = rs.getString("DIRECCION_MOROSO");
 				String nif = rs.getString("NIFCIF_MOROSO");
 				String nombre = rs.getString("NOMBRE_MOROSO");
-				String tlf = rs.getString("TLF_MOROSO");
+				String tlf_fijo = rs.getString("TLF_FIJO_MOROSO");
+				String tlf_movil = rs.getString("TLF_MOVIL_MOROSO");
 				String ciudadMoroso = rs.getString("CIUDAD_MOROSO");
 				String ciudadComunidad = rs.getString("CIUDAD_COMUNIDAD");
 				String nombreComunidad = rs.getString("NOMBRE_COMUNIDAD");
@@ -295,9 +347,9 @@ public class CertificadosServiceImpl implements CertificadosService {
 						.getString("FECHA_CELEBRACION_JUNTAS");
 				String textoLibre = rs.getString("TEXTO_LIBRE_JUNTAS");
 				info = new InfoCertificadoDeuda(cp, direccionMoroso, nif,
-						nombre, tlf, ciudadMoroso, ciudadComunidad,
-						nombreComunidad, direccionComunidad, adminComunidad,
-						presi, fechaCelebracion, textoLibre);
+						nombre, tlf_fijo, tlf_movil, ciudadMoroso,
+						ciudadComunidad, nombreComunidad, direccionComunidad,
+						adminComunidad, presi, fechaCelebracion, textoLibre);
 				info.setEstado("OK");
 
 			}
@@ -335,7 +387,7 @@ public class CertificadosServiceImpl implements CertificadosService {
 			CertificadosBean beanProperties = certificadosProperties
 					.getCertificadosProperties();
 
-			LOG.info("beanProperties: " + beanProperties.toString());
+			// LOG.info("beanProperties: " + beanProperties.toString());
 
 			String rutaConexiondb = beanProperties.getRUTA_CONEXION_DB().trim();
 			String passdb = beanProperties.getPASS_DB().trim();
@@ -426,5 +478,166 @@ public class CertificadosServiceImpl implements CertificadosService {
 
 		return listaCertificados;
 
+	}
+
+	@Override
+	public List<DatosDemandaAdmin> traerCertificadosAdmin() {
+
+		Connection conn = null;
+		DatosDemandaAdmin info = null;
+		List<DatosDemandaAdmin> listaCertificados = new ArrayList<DatosDemandaAdmin>();
+
+		try {
+			CertificadosBean beanProperties = certificadosProperties
+					.getCertificadosProperties();
+
+			// LOG.info("beanProperties: " + beanProperties.toString());
+
+			String rutaConexiondb = beanProperties.getRUTA_CONEXION_DB().trim();
+			String passdb = beanProperties.getPASS_DB().trim();
+			String userdb = beanProperties.getUSUARIO_DB().trim();
+
+			conn = DriverManager.getConnection(rutaConexiondb, userdb, passdb);
+			conn.setAutoCommit(false);
+			PreparedStatement ps = conn
+					.prepareStatement(SQL_CERTIFICADOS_ENTRANTES_ONLY_ADMIN);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+
+				BigDecimal montante = rs.getBigDecimal("montante");
+				String rutacertificado = rs.getString("rutacertificado");
+				String direccion_vivienda = rs.getString("direccion_vivienda");
+				String nombre_moroso = rs.getString("nombre_moroso");
+				String telefonofijo_moroso = rs
+						.getString("telefonofijo_moroso");
+				String tlf_movil = rs.getString("tlf_movil");
+				String fechainiciodemanda = rs.getString("fechainiciodemanda");
+				int estadoDemanda = rs.getInt("estado_demanda");
+				String cliente_admin_fincas = rs
+						.getString("cliente_admin_fincas");
+				Long iddemanda = rs.getLong("iddemanda");
+
+				switch (DatosDemanda.ESTADO_DEMANDA.values()[estadoDemanda]) {
+				case ENVIADA_A_JURIDIA: {
+					// LOG.info("_estadoDemanda: " + _estadoDemanda);
+					info = new DatosDemandaAdmin(montante, "ENVIADA_A_JURIDIA",
+							rutacertificado, direccion_vivienda, nombre_moroso,
+							telefonofijo_moroso, tlf_movil, fechainiciodemanda,
+							cliente_admin_fincas, iddemanda);
+
+				}
+					break;
+				case ASIGNADA_A_ABOGADO: {
+					DatosDemanda.ESTADO_DEMANDA _estadoDemanda = DatosDemanda.ESTADO_DEMANDA.ASIGNADA_A_ABOGADO;
+
+					// LOG.info("_estadoDemanda: " + _estadoDemanda);
+					info = new DatosDemandaAdmin(montante,
+							"ASIGNADA_A_ABOGADO", rutacertificado,
+							direccion_vivienda, nombre_moroso,
+							telefonofijo_moroso, tlf_movil, fechainiciodemanda,
+							cliente_admin_fincas, iddemanda);
+
+				}
+					break;
+				case CERRADA: {
+					DatosDemanda.ESTADO_DEMANDA _estadoDemanda = DatosDemanda.ESTADO_DEMANDA.CERRADA;
+
+					info = new DatosDemandaAdmin(montante, "CERRADA",
+							rutacertificado, direccion_vivienda, nombre_moroso,
+							telefonofijo_moroso, tlf_movil, fechainiciodemanda,
+							cliente_admin_fincas, iddemanda);
+				}
+					break;
+				default: {
+					LOG.error("traerCertificadosAdmin: estado no identificado!! ");
+
+				}
+					break;
+				}
+
+				listaCertificados.add(info);
+
+			}
+			// LOG.info("listaCertificados.size: " + listaCertificados.size());
+			rs.close();
+			ps.close();
+
+		} catch (SQLException e) {
+			LOG.info("ERROR al traerCertificados. ", e);
+
+		} finally {
+			if (conn != null) {
+				try {
+					LOG.info("CertificadoService. Tratando de cerrar la conexion con la bd...");
+					conn.close();
+					LOG.info("CertificadoService. conexion cerrada con la bd...");
+				} catch (SQLException e) {
+					LOG.info(
+							"ERROR Tratando de cerrar la conexion con la bd... ",
+							e);
+				}
+			}
+		}
+
+		return listaCertificados;
+
+	}
+
+	@Override
+	@Secured("ROLE_ADMIN")
+	public List<DatosAbogado> traerAbogadosDisponibles() {
+		// TODO Auto-generated method stub
+		Connection conn = null;
+		DatosAbogado info = null;
+		List<DatosAbogado> listaDatosAbogado = new ArrayList<DatosAbogado>();
+
+		try {
+			CertificadosBean beanProperties = certificadosProperties
+					.getCertificadosProperties();
+
+			String rutaConexiondb = beanProperties.getRUTA_CONEXION_DB().trim();
+			String passdb = beanProperties.getPASS_DB().trim();
+			String userdb = beanProperties.getUSUARIO_DB().trim();
+
+			conn = DriverManager.getConnection(rutaConexiondb, userdb, passdb);
+			conn.setAutoCommit(false);
+			PreparedStatement ps = conn
+					.prepareStatement(SQL_ABOGADOS_DISPONIBLES);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				Long idabogado = rs.getLong("idabogado");
+				String nombre = rs.getString("nombre");
+				String apellidos = rs.getString("apellidos");
+				String cp = rs.getString("cp");
+				String direccion = rs.getString("direccion");
+				String tlfContacto = rs.getString("tlf");
+				String ciudad = rs.getString("ciudad");
+				info = new DatosAbogado(idabogado, nombre, apellidos, ciudad,
+						cp, direccion, tlfContacto);
+				listaDatosAbogado.add(info);
+
+			}
+			// LOG.info("listaCertificados.size: " + listaCertificados.size());
+			rs.close();
+			ps.close();
+
+		} catch (SQLException e) {
+			LOG.info("ERROR al traerCertificados. ", e);
+
+		} finally {
+			if (conn != null) {
+				try {
+					LOG.info("CertificadoService. Tratando de cerrar la conexion con la bd...");
+					conn.close();
+					LOG.info("CertificadoService. conexion cerrada con la bd...");
+				} catch (SQLException e) {
+					LOG.info(
+							"ERROR Tratando de cerrar la conexion con la bd... ",
+							e);
+				}
+			}
+
+		}
+		return listaDatosAbogado;
 	}
 }

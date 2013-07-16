@@ -6,7 +6,7 @@ import com.aironman.core.pojos.Moroso;
 
 public interface MorosasDao extends AbstractDao<Moroso, String> {
 
-	boolean addMoroso(final Moroso value) throws DataAccessException;
+	Moroso addMoroso(final Moroso value) throws DataAccessException;
 
 	Moroso getMorosoByClave(final String nifcif) throws DataAccessException;
 

@@ -27,4 +27,5 @@ public class HistoricoDemandasDaoImpl extends
 		// saveOrUpdate(value);
 		merge(value);
 	}
+
 }

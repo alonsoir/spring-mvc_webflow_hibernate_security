@@ -13,6 +13,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.aironman.core.pojos.JuntasOrdinarias;
+import com.aironman.core.pojos.ServiceResponse;
 import com.aironman.core.service.JuntasOrdinariasService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -34,30 +35,36 @@ public class JuntasServiceTest {
 	@Test
 	public void testaddJuntasOrdinarias() {
 
-		/*
-		 * String username = "alonsoir"; Users usuario = new Users();
-		 * usuario.setUserName(username);
-		 */
 		JuntasOrdinarias value = new JuntasOrdinarias();
-		value.setFechaCelebracion("05/07/2013");
+		value.setFechaCelebracion("06/07/2013");
 		value.setTextoLibre("TEXTO LIBRE");
-		boolean retorno = false;
+
+		JuntasOrdinarias value1 = new JuntasOrdinarias();
+		value1.setFechaCelebracion("06/07/2013");
+		value1.setTextoLibre("TEXTO LIBRE MOFICADO");
+
+		ServiceResponse retorno = null;
+		ServiceResponse retorno1 = null;
 		try {
 			retorno = juntasService.addJuntasOrdinarias(value);
+			value1.setIdJunta(retorno.getIdGenerado());
+			retorno1 = juntasService.addJuntasOrdinarias(value1);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			LOG.info("ERROR al crear la junta de vecinos", e);
 			e.printStackTrace();
 			Assert.assertNotNull(null);
 		}
-		Assert.assertTrue(retorno);
-
+		Assert.assertNotNull(retorno);
+		Assert.assertNotNull(retorno1);
+		Assert.assertTrue(retorno.getEstado());
+		Assert.assertTrue(retorno1.getEstado());
 	}
 
 	@Test
 	public void getJuntasOrdinariasByFecha() {
 
-		String fecha = "05/07/2013";
+		String fecha = "06/07/2013";
 		try {
 			List<JuntasOrdinarias> lista = juntasService
 					.getJuntasOrdinariasByFecha(fecha);
@@ -66,7 +73,7 @@ public class JuntasServiceTest {
 
 			for (JuntasOrdinarias junta : lista) {
 				Assert.assertNotNull(junta);
-				Assert.assertEquals("05/07/2013", junta.getFechaCelebracion());
+				Assert.assertEquals("06/07/2013", junta.getFechaCelebracion());
 
 			}
 
@@ -76,4 +83,5 @@ public class JuntasServiceTest {
 			Assert.assertNotNull(null);
 		}
 	}
+
 }

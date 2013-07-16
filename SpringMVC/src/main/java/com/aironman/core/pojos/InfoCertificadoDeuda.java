@@ -5,12 +5,13 @@ public class InfoCertificadoDeuda implements java.io.Serializable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -8154877087575495L;
+	private static final long serialVersionUID = 2440579235208458914L;
 	private String cp = null;
 	private String direccionMoroso = null;
 	private String nif = null;
 	private String nombre = null;
-	private String tlf = null;
+	private String tlf_fijo = null;
+	private String tlf_movil = null;
 	private String ciudadMoroso = null;
 	private String ciudadComunidad = null;
 	private String nombreComunidad = null;
@@ -27,16 +28,18 @@ public class InfoCertificadoDeuda implements java.io.Serializable {
 	}
 
 	public InfoCertificadoDeuda(String cp, String direccionMoroso, String nif,
-			String nombre, String tlf, String ciudadMoroso,
-			String ciudadComunidad, String nombreComunidad,
-			String direccionComunidad, String adminComunidad, String presi,
-			String fechaCelebracion, String textoLibre) {
+			String nombre, String tlf_fijo, String tlf_movil,
+			String ciudadMoroso, String ciudadComunidad,
+			String nombreComunidad, String direccionComunidad,
+			String adminComunidad, String presi, String fechaCelebracion,
+			String textoLibre) {
 		super();
 		this.cp = cp;
 		this.direccionMoroso = direccionMoroso;
 		this.nif = nif;
 		this.nombre = nombre;
-		this.tlf = tlf;
+		this.tlf_fijo = tlf_fijo;
+		this.tlf_movil = tlf_movil;
 		this.ciudadMoroso = ciudadMoroso;
 		this.ciudadComunidad = ciudadComunidad;
 		this.nombreComunidad = nombreComunidad;
@@ -70,10 +73,6 @@ public class InfoCertificadoDeuda implements java.io.Serializable {
 
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
-	}
-
-	public void setTlf(String tlf) {
-		this.tlf = tlf;
 	}
 
 	public void setCiudadMoroso(String ciudadMoroso) {
@@ -124,10 +123,6 @@ public class InfoCertificadoDeuda implements java.io.Serializable {
 		return nombre;
 	}
 
-	public String getTlf() {
-		return tlf;
-	}
-
 	public String getCiudadMoroso() {
 		return ciudadMoroso;
 	}
@@ -160,16 +155,12 @@ public class InfoCertificadoDeuda implements java.io.Serializable {
 		return textoLibre;
 	}
 
-	@Override
-	public String toString() {
-		return "InfoCertificadoDeuda [cp=" + cp + ", direccionMoroso="
-				+ direccionMoroso + ", nif=" + nif + ", nombre=" + nombre
-				+ ", tlf=" + tlf + ", ciudadMoroso=" + ciudadMoroso
-				+ ", ciudadComunidad=" + ciudadComunidad + ", nombreComunidad="
-				+ nombreComunidad + ", direccionComunidad="
-				+ direccionComunidad + ", adminComunidad=" + adminComunidad
-				+ ", presi=" + presi + ", fechaCelebracion=" + fechaCelebracion
-				+ ", textoLibre=" + textoLibre + "]";
+	public String getTlf_fijo() {
+		return tlf_fijo;
+	}
+
+	public String getTlf_movil() {
+		return tlf_movil;
 	}
 
 }

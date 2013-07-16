@@ -63,8 +63,10 @@ public class ServicioMailImpl implements ServicioMail {
 
 	private static final String subject = "Un posible nuevo cliente en Juridia";
 
-	// tienes que pensar en un buen content
-	private static final String content = "Enhorabuena, acaba de realizar una compra en nuestro establicimiento. ";
+	// tienes que pensar en un buen content. Como paso en el content la url
+	// exacta del certificado generado? lo q esta claro es q esto no ser‡ ni
+	// static ni final
+	private static final String content = "Enhorabuena, acaba de llegar una peticion sobre un certificado generado. ";
 
 	@Autowired
 	private MailPropertiesConfig mailPropertiesConfig;
@@ -83,9 +85,6 @@ public class ServicioMailImpl implements ServicioMail {
 		try {
 			Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
 			Properties props = new Properties();
-			// bufffff esto es mejorable, no es plan tener hardcodeado en un
-			// ffichero java o en un properties
-			// puestos a elegir mejor en un properties
 			props.setProperty(Constantes.MAIL_TRANSPORT_PROTOCOL,
 					Constantes.PROTOCOLO_SMTP);
 			props.setProperty(Constantes.MAIL_HOST, Constantes.SMTP_GMAIL);
@@ -106,7 +105,7 @@ public class ServicioMailImpl implements ServicioMail {
 			// Session.getDefaultInstance(props, , new
 			// javax.mail.Authenticator());
 			MailBean mailBean = mailPropertiesConfig.getMailProperties();
-			log.info("mailBean: " + mailBean.toString());
+			// log.info("mailBean: " + mailBean.toString());
 			final String passMail = mailBean.getPassMail();
 			final String userMail = mailBean.getUserMail();
 
@@ -118,8 +117,7 @@ public class ServicioMailImpl implements ServicioMail {
 							// emails a los clientes que han confirmado el carro
 							// de su compra
 							// lo suyo seria que esto se pudiera cargar desde
-							// algun fichero constantes.properties que aun no
-							// tienes
+							// algun fichero constantes.properties
 							return new PasswordAuthentication(userMail,
 									passMail);
 						}

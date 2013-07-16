@@ -13,6 +13,8 @@
 	<div class="linkComunidades">
 		<h2>Fincas morosas</h2>
 		<form:form modelAttribute="pojoFincas" method="post" id="fincasMorosasForm">
+			respuesta.idGenerado: <c:out value="${respuesta.idGenerado}"/>
+			<form:hidden path="idDeuda" value='${respuesta.idGenerado}'/>
 			<table>
 				<tr>
 					<td><form:label path="montante">Montante de la deuda</form:label>
@@ -55,12 +57,15 @@
 					<td>
 						<input type="submit" name="_eventId_guardarFinca" 
 							   value="Guardar Finca" class="botonSave" />
-						<c:if test="${idDeuda > 0}">
-							<p class="success">Finca morosa creada con exito</p>								
+							   
+						<c:if test="${respuesta.estado == 'true'}">
+							<p class="success">
+								YEA!<c:out value="${respuesta.mensaje}"/>
+							</p>								
 						</c:if>
-						<c:if test="${idDeuda <= 0}">
+						<c:if test="${respuesta.estado == 'false'}">
 							<p class="failure">
-								Datos del moroso actualizados exitósamente
+								UPS<c:out value="${respuesta.mensaje}"/>
 							</p>
 						</c:if>
 						

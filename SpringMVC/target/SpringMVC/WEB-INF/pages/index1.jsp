@@ -6,8 +6,9 @@
 		<c:out value="${currentUser.name}" />
 	</h2>
 	<h4>Este es un listado de tus certificados emitidos por Juridia.</h4>
+	
 	<!-- Como hacer que este cacho solo lo vean el que tenga el perfil de los admin fincas -->
-	<table id="demoTable">
+	<table id="tablaCertificadosFincas">
 		<thead>
 			<tr>
 				<th>ESTADO DEMANDA</th>
@@ -31,6 +32,8 @@
 				<td>${certificado.direccionComunidad}</td>
 				<td>${certificado.refCatastral}</td>
 				<td>
+				<!-- esto esta fatal, por lo menos tengo que averiguar como se llama el nombre del contexto, es decir, el
+				equivalente a /SpringMVC -->
 					<a href="/SpringMVC/files/<c:out value="${certificado.urlCertificado}"/>" target="_blank">ver
 						certificado</a>
 				</td>
@@ -63,7 +66,7 @@
  
 <script type="text/javascript">
 $(document).ready(function() {
-    $('#demoTable').dataTable();
+    $('#tablaCertificadosFincas').dataTable();
 } );
 </script>
 <%@ include file="common/footer.jsp"%>

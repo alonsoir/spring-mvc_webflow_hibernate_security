@@ -8,11 +8,13 @@ public interface UserService {
 
 	Users login(String userName, String pass);
 
-	Users findByUserName(String userName);
+	Users findByIdUser(Long idUser);
 
 	void saveUser(Users user);
 
 	void deleteUser(String userName);
 
 	List<Users> findUsers(String user);
+
+	boolean isUsernameAdmin(String username);
 }

@@ -9,12 +9,13 @@
 	<var name="pojoMorosos" class="com.aironman.core.pojos.Moroso" />
 	<var name="pojoJuntas" class="com.aironman.core.pojos.JuntasOrdinarias" />
 	<var name="pojoViviendas" class="com.aironman.core.pojos.ViviendasConDeudas" />
-	<var name="pojoUsers" class="com.aironman.core.pojos.Users"/>
 	
 	
 	<!-- 
 	como lo quieres tener a dia de hoy, la razon es que comunidades tiene una fk a juntas, asi es mas sencillo y eficiente, solo se hacen inserts o updates
 	juntas -> Comunidades -> moroso -> fincasmorosas -> certificados
+	
+	IMP!! http://forum.springsource.org/archive/index.php/t-23950.html
 	-->
 	<view-state id="index1">
 		<on-render>
@@ -26,6 +27,7 @@
 	<!-- primer paso del flujo, comunidades de vecinos -->
 	<view-state id="juntas" model="pojoJuntas">
 		<binder>
+			<binding property="idJunta" required="false"/>
 			<binding property="fechaCelebracion" required="true"/>
 			<binding property="textoLibre" required="true"/>
 		</binder>
@@ -43,6 +45,7 @@
 
 	<view-state id="comunidades" model="pojoComunidades">
 		<binder>
+			<binding property="idComunidad" required="false"/>
 			<binding property="refCatastral" required="false"/>
 			<binding property="ciudad" required="true"/>
 			<binding property="cp" required="true"/>
@@ -57,7 +60,7 @@
 		<transition on="traerComunidad" to="getComunidadAction" validate="false"/>
 		<transition on="avanzaAMorosos" to="morosos" />
 	</view-state>
-
+<!-- esto jamas te funcionara, pues el unico pojo que tiene valor es pojoComunidades -->
 	<action-state id="getComunidadAction">
 		<evaluate
 			expression="comunidadService.getComunidadVecinosByCriterion(pojoComunidades.refCatastral,pojoComunidades.direccion)"
@@ -65,8 +68,9 @@
 		<transition to="comunidades" />
 	</action-state>
 
+<!-- flowScope.mensajeJuntas.idGenerado almacena idJunta -->
 	<action-state id="addComunidadAction">
-		<evaluate expression="comunidadService.addComunidadVecinos(pojoComunidades,pojoJuntas,pojoUsers,currentUser.name)" 
+		<evaluate expression="comunidadService.addComunidadVecinos(pojoComunidades,flowScope.mensajeJuntas.idGenerado,currentUser.name)" 
 				  result="flowScope.mensajeComunidades"/>
 		<transition to="comunidades" />
 	</action-state>
@@ -75,8 +79,10 @@
 
 	<view-state id="morosos" model="pojoMorosos">
 		<binder>
+			<binding property="idMoroso" required="false"/>
 			<binding property="nifCif" required="true"/>
-			<binding property="tlf" required="true"/>
+			<binding property="tlffijo" required="true"/>
+			<binding property="tlfmovil" required="true"/>
 			<binding property="cp" required="true"/>
 			<binding property="nombreCompleto" required="true"/>
 			<binding property="ciudad" required="true"/>
@@ -97,6 +103,7 @@
 	<!-- cuarto paso del flujo -->
 	<view-state id="fincasmorosas" model="pojoFincas">
 		<binder>
+			<binding property="idDeuda" required="false"/>
 			<binding property="montante" required="true"/>
 			<binding property="direccionViviendaDeudora" required="true"/>
 			<binding property="tipo" required="true"/>
@@ -107,21 +114,24 @@
 		<transition on="avanzarACertificados" to="certificados" validate="false"/>
 	</view-state>
 
-<!-- el metodo  fincasMorosasService.addViviendasConDeudas devuelve el id de la tupla generada en bd. Lo haces asi
-porque quieres que ese id sea lo necesario para generar el documento que se genera mediante 
-la llamada a certificadosService.generarCertificadoCelebracionJunta(IDENTIFICADOR que se calcula mediante la accion addFincaAction)
--->
 	<action-state id="addFincaAction">
-		<evaluate expression="fincasMorosasService.addViviendasConDeudas(pojoFincas,pojoComunidades,pojoMorosos)" result="conversationScope.idDeuda"/>
+		<evaluate expression="fincasMorosasService.addViviendasConDeudas(pojoFincas,
+																		flowScope.mensajeComunidades.idGenerado,
+																		flowScope.mensajeMoroso.idGenerado)" 
+				  result="flowScope.respuesta"/>
 		<transition to="fincasmorosas" />
 	</action-state>
 	
 	
-	<!-- quinto paso del flujo y ultimo en ppio -->
+	<!-- quinto paso del flujo y ultimo en ppio 
+	NO PUEDES HACER QUE EL IDGENERADO RESIDA UNICAMENTE EN flowScope.respuesta.idGenerado
+	pues eso solo existe, tal y como lo tienes ahora cuando creas una finca!! como poco tienes que pensar en inicializar esa variable del flowScope
+	http://forum.springsource.org/archive/index.php/t-39629.html
+	-->
 	
 	<view-state id="certificados" model="pojoViviendas">
 		<on-render>
-        	<evaluate expression="despachoService.traerInfoParaCertificado(conversationScope.idDeuda,currentUser.name)"
+        	<evaluate expression="despachoService.traerInfoParaCertificado(flowScope.respuesta.idGenerado,currentUser.name)"
                   result="viewScope.infoCertificado" />
     	</on-render>
 		<transition on="acabarProcesoCertificado1" to="fin" />
@@ -131,7 +141,7 @@ la llamada a certificadosService.generarCertificadoCelebracionJunta(IDENTIFICADO
 
 <!-- TIENES QUE DEFINIR MAS que va a hacer esta action -->
 	<action-state id="contactarDespachoAction">
-		<evaluate expression="despachoService.generarCertificadoYCrearDemanda(conversationScope.idDeuda,currentUser.name)" 
+		<evaluate expression="despachoService.generarCertificadoYCrearDemanda(flowScope.respuesta.idGenerado,currentUser.name)" 
 				  result="flowScope.mensajeCertificado"/>
 		<transition to="certificados" />
 	</action-state>

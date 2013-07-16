@@ -22,8 +22,9 @@ public class DemandasDaoImpl extends AbstractDaoImpl<Demandas, String>
 	@Override
 	public Long generarDemanda(Demandas value) throws DataAccessException {
 		// TODO Auto-generated method stub
+		Demandas o = (Demandas) merge(value);
 
-		return (Long) merge(value);
+		return o.getIdDemanda();
 
 	}
 
@@ -32,9 +33,9 @@ public class DemandasDaoImpl extends AbstractDaoImpl<Demandas, String>
 			throws DataAccessException {
 		// TODO Auto-generated method stub
 		value.setAbogado(abogado);
-		merge(value);
+		Object o = merge(value);
 		// saveOrUpdate(value);
-		return true;
+		return o != null ? true : false;
 
 	}
 

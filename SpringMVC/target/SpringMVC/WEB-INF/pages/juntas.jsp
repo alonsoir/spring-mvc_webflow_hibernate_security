@@ -11,6 +11,7 @@
 	<div class="linkComunidades">
 		<h2>Juntas Ordinarias de comunidades de vecinos</h2>
 		<form:form modelAttribute="pojoJuntas" method="post" id="juntasForm">
+			<form:hidden path="idJunta" value='${mensajeJuntas.idGenerado}'/>					
 			<table>
 				<tr>
 					<td><label> Fecha de celebración</label> 
@@ -43,8 +44,16 @@
 					</td>
 					<td>
 						<input type="submit" name="_eventId_guardarJunta" value="Guardar" class="botonSave" />
-						<c:if test="${mensajeJuntas == 'true'}">
-							<p class="success">Datos de la junta creados o actualizados exitósamente</p>
+						<c:if test="${mensajeJuntas.estado == 'true'}">
+							<p class="success">
+								<c:out value="${mensajeJuntas.mensaje}"/>
+							</p>
+								
+						</c:if>
+						<c:if test="${mensajeJuntas.estado == 'false'}">
+							<p class="failure">
+								<c:out value="${mensajeJuntas.mensaje}"/>
+							</p>
 								
 						</c:if>
 					</td>

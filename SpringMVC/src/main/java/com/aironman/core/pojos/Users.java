@@ -20,7 +20,7 @@ public class Users implements java.io.Serializable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 4118604917704419162L;
+	private static final long serialVersionUID = 7156022020456062249L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,11 +35,7 @@ public class Users implements java.io.Serializable {
 
 	@Column(name = "ENABLED", nullable = false)
 	private boolean enabled;
-	/*
-	 * java.util.Date date= new java.util.Date(); System.out.println(new
-	 * Timestamp(date.getTime()));
-	 */
-	// lo suyo es usar alguna etiqueta
+
 	@Column(name = "CREATED_ON", nullable = true)
 	private Date createdOn;
 
@@ -52,6 +48,9 @@ public class Users implements java.io.Serializable {
 
 	@OneToMany(mappedBy = "usuario")
 	private final Collection<Demandas> demandasContratadas = new ArrayList<Demandas>();
+
+	@OneToMany(mappedBy = "usuario")
+	private final Collection<Abogados> abogados = new ArrayList<Abogados>();
 
 	public Users() {
 	}
@@ -122,6 +121,8 @@ public class Users implements java.io.Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
+				+ ((abogados == null) ? 0 : abogados.hashCode());
+		result = prime * result
 				+ ((comunidades == null) ? 0 : comunidades.hashCode());
 		result = prime * result
 				+ ((createdOn == null) ? 0 : createdOn.hashCode());
@@ -149,6 +150,11 @@ public class Users implements java.io.Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Users other = (Users) obj;
+		if (abogados == null) {
+			if (other.abogados != null)
+				return false;
+		} else if (!abogados.equals(other.abogados))
+			return false;
 		if (comunidades == null) {
 			if (other.comunidades != null)
 				return false;
@@ -194,7 +200,8 @@ public class Users implements java.io.Serializable {
 		return "Users [userId=" + userId + ", userName=" + userName
 				+ ", password=" + password + ", enabled=" + enabled
 				+ ", createdOn=" + createdOn + ", lastLoginOn=" + lastLoginOn
-				+ "]";
+				+ ", comunidades=" + comunidades + ", demandasContratadas="
+				+ demandasContratadas + ", abogados=" + abogados + "]";
 	}
 
 }

@@ -3,14 +3,13 @@ package com.aironman.core.service;
 import org.springframework.security.access.annotation.Secured;
 
 import com.aironman.core.pojos.ComunidadVecinos;
-import com.aironman.core.pojos.JuntasOrdinarias;
-import com.aironman.core.pojos.Users;
+import com.aironman.core.pojos.ServiceResponse;
 
 public interface ComunidadService {
 
 	@Secured("ROLE_FINCA")
-	boolean addComunidadVecinos(ComunidadVecinos value,
-			JuntasOrdinarias juntas, Users users, String username);
+	ServiceResponse addComunidadVecinos(ComunidadVecinos value, Long idJunta,
+			String username);
 
 	@Secured("ROLE_FINCA")
 	ComunidadVecinos getComunidadVecinosByDireccion(String key);

@@ -7,13 +7,15 @@
 
 	<global-method-security secured-annotations="enabled" jsr250-annotations="enabled"/>
 
-	<http auto-config='true'>
-		<intercept-url pattern="/j_spring_security_login" access="IS_AUTHENTICATED_ANONYMOUSLY" requires-channel="any"/>
-		<intercept-url pattern="/j_spring_security_check" access="IS_AUTHENTICATED_ANONYMOUSLY" requires-channel="any"/>
-		<intercept-url pattern="/flows**" access="ROLE_FINCA,ROLE_ADMIN" requires-channel="any"/>
-		<intercept-url pattern="/favicon.ico" access="ROLE_ANONYMOUS" />
-		<intercept-url pattern="/resources/**" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-		<intercept-url pattern="/files/*" access="ROLE_FINCA,ROLE_ABOGADO,ROLE_ADMIN" requires-channel="any"/>
+	<http auto-config='true' use-expressions="true">
+		<intercept-url pattern="/j_spring_security_login" access="permitAll" requires-channel="any"/>
+		<intercept-url pattern="/j_spring_security_check" access="permitAll" requires-channel="any"/>
+		<intercept-url pattern="/flows**" access="hasAnyRole('ROLE_FINCA')" requires-channel="any"/>
+		<intercept-url pattern="/admin**" access="hasAnyRole('ROLE_ADMIN')" requires-channel="any"/>
+		<intercept-url pattern="/favicon.ico" access="permitAll" />
+		<intercept-url pattern="/resources/**" access="permitAll"/>
+		<!-- yo creo q actualmente hasAnyRole no esta funcionando adecuadamente, solo pilla uno de los 3!!! check! -->
+		<intercept-url pattern="/files/*" access="hasAnyRole('ROLE_FINCA','ROLE_ADMIN','ROLE_ABOGADO')" requires-channel="any"/>
 		<access-denied-handler ref="accessDeniedHandler"/>
 		<!-- 
 		/flows esta definido en el mvc-dispatcher-servlet, como la propiedad mappings del

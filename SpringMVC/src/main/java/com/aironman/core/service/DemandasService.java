@@ -7,9 +7,6 @@ import com.aironman.core.pojos.Demandas;
 
 public interface DemandasService {
 
-	@Secured("ROLE_FINCA")
-	public Object generarDemanda(Demandas value);
-
 	@Secured("ROLE_ABOGADO")
 	public boolean asignarAbogadoADemanda(Demandas value, Abogados abogado);
 

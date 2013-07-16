@@ -2,7 +2,6 @@ package com.aironman.core.test;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import org.junit.After;
 import org.junit.Before;
@@ -57,9 +56,8 @@ public class CertificadosControllerTest {
 		//
 		// session.setAttribute("sessionParm", user);
 		try {
-			this.mockMvc.perform(get("/files/certificadoDeuda-12.htm"))
-					.andExpect(status().isOk())
-					.andExpect(view().name("certificados"));
+			this.mockMvc.perform(get("/files/certificadoDeuda-12.pdf"))
+					.andExpect(status().isOk());
 			LOG.info("testgetFile executed!");
 		} catch (Exception e1) {
 			LOG.error("ERROR!", e1);

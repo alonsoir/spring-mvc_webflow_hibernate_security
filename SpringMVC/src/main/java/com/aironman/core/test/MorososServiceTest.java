@@ -11,6 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.aironman.core.pojos.Moroso;
+import com.aironman.core.pojos.ServiceResponse;
 import com.aironman.core.service.MorosasService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -40,13 +41,17 @@ public class MorososServiceTest {
 		value.setNombreCompleto("NOMBRECOMPLETO");
 		value.setTlfmovil("667999999");
 		value.setTlffijo("924233930");
-		boolean condition = false;
+		ServiceResponse response = null;
 		try {
-			condition = morosasService.addMoroso(value);
+			response = morosasService.addMoroso(value);
+			Assert.assertNotNull(response);
+			Assert.assertTrue(response.getEstado());
+			Assert.assertNotNull(response.getMensaje());
+
 		} catch (Exception e) {
 			LOG.info("exception on testAddMoroso", e);
 		}
-		Assert.assertNotNull(condition);
+
 	}
 
 	@Test

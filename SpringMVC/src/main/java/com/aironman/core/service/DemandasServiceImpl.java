@@ -37,12 +37,6 @@ public class DemandasServiceImpl implements DemandasService {
 	private HistoricoDemandasDao historicoDemandasDao;
 
 	@Override
-	public Object generarDemanda(Demandas value) {
-		// TODO Auto-generated method stub
-		return demandasDao.generarDemanda(value);
-	}
-
-	@Override
 	public boolean asignarAbogadoADemanda(Demandas value, Abogados abogado) {
 		// TODO Auto-generated method stub
 		return demandasDao.asignarAbogadoADemanda(value, abogado);
@@ -57,7 +51,7 @@ public class DemandasServiceImpl implements DemandasService {
 		Users userLogado = null;
 		if (listaUsuarioLogado != null && listaUsuarioLogado.size() > 0) {
 			userLogado = listaUsuarioLogado.get(0);
-			LOG.info("Usuario logado: " + userLogado.toString());
+			LOG.info("Usuario logado: " + userLogado.getUserName());
 		}
 		Demandas demanda = new Demandas();
 		demanda.setUsuario(userLogado);

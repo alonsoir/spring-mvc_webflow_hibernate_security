@@ -4,12 +4,9 @@ import org.springframework.dao.DataAccessException;
 
 import com.aironman.core.pojos.ViviendasConDeudas;
 
-public interface FincasMorosasDao extends
-		AbstractDao<ViviendasConDeudas, String> {
+public interface FincasMorosasDao extends AbstractDao<ViviendasConDeudas, Long> {
 
-	void addViviendasConDeudas(ViviendasConDeudas value)
+	ViviendasConDeudas addViviendasConDeudas(ViviendasConDeudas value)
 			throws DataAccessException;
 
-	ViviendasConDeudas getViviendasConDeudasByClave(String key)
-			throws DataAccessException;
 }

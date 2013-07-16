@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.aironman.core.pojos.Users;
 
 @Repository
-public class UserDaoImpl extends AbstractDaoImpl<Users, String> implements
+public class UserDaoImpl extends AbstractDaoImpl<Users, Long> implements
 		UserDao {
 
 	private static final Logger LOG = LoggerFactory
@@ -24,9 +24,10 @@ public class UserDaoImpl extends AbstractDaoImpl<Users, String> implements
 	}
 
 	@Override
-	public void saveUser(final Users user) {
+	public Users saveUser(final Users user) {
 		// saveOrUpdate(user);
-		merge(user);
+		Users _user = (Users) merge(user);
+		return _user;
 	}
 
 	@Override
@@ -53,4 +54,5 @@ public class UserDaoImpl extends AbstractDaoImpl<Users, String> implements
 		LOG.info("userLogado: " + userLogado.toString());
 		return userLogado;
 	}
+
 }

@@ -47,6 +47,10 @@ public class JuntasOrdinarias implements Serializable {
 		return idJunta;
 	}
 
+	/*
+	 * public void setIdJunta(String idJunta) { this.idJunta =
+	 * Long.valueOf(idJunta); }
+	 */
 	public void setIdJunta(Long idJunta) {
 		this.idJunta = idJunta;
 	}

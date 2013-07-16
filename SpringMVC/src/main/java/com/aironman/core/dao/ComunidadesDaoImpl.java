@@ -23,11 +23,11 @@ public class ComunidadesDaoImpl extends
 	}
 
 	@Override
-	public boolean addComunidadVecinos(ComunidadVecinos value)
+	public ComunidadVecinos addComunidadVecinos(ComunidadVecinos value)
 			throws DataAccessException {
-		merge(value);
+		ComunidadVecinos o = (ComunidadVecinos) merge(value);
 		// saveOrUpdate(value);
-		return true;
+		return o;
 	}
 
 	@Override
@@ -40,8 +40,8 @@ public class ComunidadesDaoImpl extends
 		ComunidadVecinos comunidadVecinos = null;
 		if (listaComunidadVecinos != null && listaComunidadVecinos.size() > 0) {
 			comunidadVecinos = listaComunidadVecinos.get(0);
-			LOG.info("getComunidadVecinosByDireccion. comunidadVecinos: "
-					+ comunidadVecinos.toString());
+			LOG.info("getComunidadVecinosByDireccion. nombre Comunidad comunidadVecinos: "
+					+ comunidadVecinos.getNombreComunidad());
 
 		}
 		return comunidadVecinos;
@@ -50,7 +50,8 @@ public class ComunidadesDaoImpl extends
 
 	/**
 	 * basicamente a–adimos todos los filtros por los que podemos buscar una
-	 * comunidad de vecinos, es decir, por su refCatastral y por su direccion
+	 * comunidad de vecinos, es decir, por su refCatastral y por su direccion va
+	 * a hacer un or
 	 */
 	@Override
 	public ComunidadVecinos getComunidadVecinosByCriterion(String refCatastral,
@@ -62,15 +63,16 @@ public class ComunidadesDaoImpl extends
 
 			Criterion criterioRefCatastral = Restrictions.like("refCatastral",
 					refCatastral);
-			criterionComunidad = Restrictions.and(criterioRefCatastral);
+			criterionComunidad = Restrictions.or(criterioRefCatastral);
 		}
 		if (direccion != null && !direccion.equals("")) {
 			Criterion criterioDireccion = Restrictions.like("direccion",
 					direccion);
-			criterionComunidad = Restrictions.and(criterioDireccion);
+			criterionComunidad = Restrictions.or(criterioDireccion);
 		}
 		if (criterionComunidad != null) {
-			LOG.info("getComunidadVecinosByCriterion. Hay criterios insertados...");
+			LOG.info("getComunidadVecinosByCriterion. Hay criterios insertados..."
+					+ criterionComunidad.toString());
 			lista = findByCriteria(criterionComunidad);
 
 		}

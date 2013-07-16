@@ -39,7 +39,10 @@
 					Nombre: <c:out value="${infoCertificado.nombre }"/>
 				</p>
 				<p class="successInfoCertificado">
-					Teléfono: <c:out value="${infoCertificado.tlf }"/>
+					Teléfono Fijo: <c:out value="${infoCertificado.tlf_fijo }"/>
+				</p>
+				<p class="successInfoCertificado">
+					Teléfono movil: <c:out value="${infoCertificado.tlf_movil }"/>
 				</p>
 				<p class="successInfoCertificado">
 					Ciudad Moroso: <c:out value="${infoCertificado.ciudadMoroso }"/>
@@ -79,16 +82,17 @@
 					<td>
 						<input type="submit" name="_eventId_contactarDespacho" 
 							   value="Contactar con el despacho" class="botonSave" />
-						<c:if test="${fn:length(mensajeCertificado) > 0}">
+						<!-- esto tiene que cambiar, mensajeCertificado es ahora un objeto complejo con un boolean y el mensaje -->
+						<c:if test="${mensajeCertificado.estado == 'true'}">
 							<p class="success">
-								Certificado generado exitósamente y guardado en el sistema en <c:out value="${rutaFisicaCertificado}"/>
+								YEAH! <c:out value="${mensajeCertificado.mensaje}"/>
 							</p>
 						
 						</c:if>
 		
-						<c:if test="${fn:length(mensajeCertificado) == 0}">
+						<c:if test="${mensajeCertificado.estado == 'false'}">
 							<p class="failure">
-								No se ha podido generar el certificado. 
+								UPPPS! <c:out value="${mensajeCertificado.mensaje}"/>
 							</p>
 						
 						</c:if>				

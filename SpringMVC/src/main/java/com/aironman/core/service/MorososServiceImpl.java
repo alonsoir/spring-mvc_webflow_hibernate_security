@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.aironman.core.dao.MorosasDao;
 import com.aironman.core.pojos.Moroso;
+import com.aironman.core.pojos.ServiceResponse;
 
 @Service("morososService")
 @Transactional(readOnly = true)
@@ -23,42 +24,36 @@ public class MorososServiceImpl implements MorosasService {
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean addMoroso(final Moroso moroso) {
+	public ServiceResponse addMoroso(final Moroso moroso) {
 
-		boolean retorno = false;
+		ServiceResponse response = new ServiceResponse();
+		StringBuilder sb = new StringBuilder();
 		try {
 			Moroso morosoExistente = morosasDao.getMorosoByCriterion(
 					moroso.getNifCif(), moroso.getTlffijo(),
 					moroso.getTlfmovil());
 			if (morosoExistente != null) {
-				LOG.info("ATENCION, ya existe un moroso con esa clave o ese tlf "
-						+ moroso.getNifCif()
-						+ " tlfFijo: "
-						+ moroso.getTlffijo()
-						+ " tlfMovil: "
-						+ moroso.getTlfmovil() + " Procediendo a actualizarlo.");
-				// en este momento, los datos actuales que has cogido desde la
-				// jsp lo tienes en el pojo moroso que te entra por cabecera de
-				// metodo
-				// que hacer? como poco avisar al cliente que existe ese moroso
-				// y que vas a actualizar al moroso, para ello debes
-				// proporcionar el id de la tabla
+				sb.append("Datos del moroso modificados.");
+				LOG.info(sb.toString());
+				response.setMensaje(sb.toString());
 				moroso.setIdMoroso(morosoExistente.getIdMoroso());
 			} else {
 				LOG.info("Moroso nuevo para crear...");
-				// esto es para forzar a crear un moroso nuevo
-				moroso.setIdMoroso(null);
-
+				sb.append("Datos del moroso guardados.");
+				response.setMensaje(sb.toString());
 			}
-			retorno = morosasDao.addMoroso(moroso);
+			Moroso morosoInsertado = morosasDao.addMoroso(moroso);
+			response.setEstado(morosoInsertado != null ? true : false);
+			response.setIdGenerado(morosoInsertado.getIdMoroso());
 		} catch (Exception e) {
 			LOG.info(
 					"ATENCION, excepcion a la hora de intentar a–adir un moroso a la bd. ",
 					e);
-			retorno = false;
+			response.setEstado(Boolean.FALSE);
+			response.setMensaje("ATENCION, ha ocurrido un problema a la hora de insertar los datos de un moroso.");
 
 		}
-		return retorno;
+		return response;
 
 	}
 
@@ -85,7 +80,7 @@ public class MorososServiceImpl implements MorosasService {
 			moroso = morosasDao.getMorosoByCriterion(nifcif, tlffijo, tlfmovil);
 		} catch (Exception e) {
 			LOG.info(
-					"ATENCION, excepcion a la hora de intentar recuperar el moroso por criterion nifcif : {0} tlffijo: {1} tlfmovil: {2}",
+					"ATENCION, excepcion a la hora de intentar recuperar el moroso por criterion. nifcif : {0} tlffijo: {1} tlfmovil: {2}",
 					nifcif, tlffijo, tlfmovil, e);
 		}
 		return moroso;

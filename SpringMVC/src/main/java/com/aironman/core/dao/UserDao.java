@@ -6,8 +6,9 @@ import org.springframework.dao.DataAccessException;
 
 import com.aironman.core.pojos.Users;
 
-public interface UserDao extends AbstractDao<Users, String> {
-	void saveUser(Users user);
+public interface UserDao extends AbstractDao<Users, Long> {
+
+	Users saveUser(Users user);
 
 	List<Users> findUsers(String userName) throws DataAccessException;
 

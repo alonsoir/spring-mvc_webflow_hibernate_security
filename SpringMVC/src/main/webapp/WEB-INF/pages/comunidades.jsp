@@ -49,7 +49,7 @@
 				<tr>
 					<td>
 						<form:label path="presidenteCC">Presidente de la comunidad.</form:label>
-						<form:input path="presidenteCC" maxlength="25"/>
+						<form:input path="presidenteCC" maxlength="25" required="true"/>
 					</td>
 					<td>
 						<form:label path="administradorFincas">Administrador de la comunidad</form:label>
@@ -67,12 +67,14 @@
 					</td>
 					<td>
 						<input type="submit" name="_eventId_guardarComunidad" value="Guardar comunidad" class="botonSave" />
-						<c:if test="${mensajeComunidades == 'true'}">
-							<p class="success">Comunidad creada exitósamente</p>								
+						<c:if test="${mensajeComunidades.estado == 'true'}">
+							<p class="success">
+ 								<c:out value="${mensajeComunidades.mensaje}"/> 
+							</p>								
 						</c:if>
-						<c:if test="${mensajeComunidades == 'false'}">
+						<c:if test="${mensajeComunidades.estado == 'false'}">
 							<p class="failure">
-								Comunidad actualizada exitósamente
+								<c:out value="${mensajeComunidades.mensaje}"/>
 							</p>
 						</c:if>
 						
@@ -142,7 +144,7 @@
 				refCatastral: { 
 					required: "Escribe la referencia catastral",
 					minlength: "Escribe la referencia catastral",
-					error: "Mail erróneo"
+					error: "Referencia catastral errónea"
 				},
 				ciudad: { 
 					required: "Introduzca la ciudad de la comunidad",

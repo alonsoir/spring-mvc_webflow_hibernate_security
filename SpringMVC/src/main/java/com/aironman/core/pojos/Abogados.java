@@ -3,11 +3,14 @@ package com.aironman.core.pojos;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -18,7 +21,7 @@ public class Abogados implements java.io.Serializable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -6101101103710630557L;
+	private static final long serialVersionUID = -8509293387420813906L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,8 +46,11 @@ public class Abogados implements java.io.Serializable {
 	@Column(name = "TLF")
 	private String tlfContacto;
 
-	@OneToMany(mappedBy = "abogado")
+	@OneToMany(mappedBy = "abogado", cascade = CascadeType.ALL)
 	private Collection<Demandas> demandas = new ArrayList<Demandas>();
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	private Users usuario;
 
 	public Long getIdAbogado() {
 		return idAbogado;
@@ -110,6 +116,14 @@ public class Abogados implements java.io.Serializable {
 		this.demandas = demandas;
 	}
 
+	public Users getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Users usuario) {
+		this.usuario = usuario;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -127,6 +141,7 @@ public class Abogados implements java.io.Serializable {
 		result = prime * result + ((nombre == null) ? 0 : nombre.hashCode());
 		result = prime * result
 				+ ((tlfContacto == null) ? 0 : tlfContacto.hashCode());
+		result = prime * result + ((usuario == null) ? 0 : usuario.hashCode());
 		return result;
 	}
 
@@ -179,6 +194,11 @@ public class Abogados implements java.io.Serializable {
 				return false;
 		} else if (!tlfContacto.equals(other.tlfContacto))
 			return false;
+		if (usuario == null) {
+			if (other.usuario != null)
+				return false;
+		} else if (!usuario.equals(other.usuario))
+			return false;
 		return true;
 	}
 
@@ -187,7 +207,8 @@ public class Abogados implements java.io.Serializable {
 		return "Abogados [idAbogado=" + idAbogado + ", nombre=" + nombre
 				+ ", apellidos=" + apellidos + ", ciudad=" + ciudad + ", cp="
 				+ cp + ", direccion=" + direccion + ", tlfContacto="
-				+ tlfContacto;
+				+ tlfContacto + ", demandas=" + demandas + ", usuario="
+				+ usuario + "]";
 	}
 
 }

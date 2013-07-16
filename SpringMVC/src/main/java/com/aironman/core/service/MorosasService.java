@@ -3,11 +3,12 @@ package com.aironman.core.service;
 import org.springframework.security.access.annotation.Secured;
 
 import com.aironman.core.pojos.Moroso;
+import com.aironman.core.pojos.ServiceResponse;
 
 public interface MorosasService {
 
 	@Secured("ROLE_FINCA")
-	boolean addMoroso(final Moroso moroso);
+	ServiceResponse addMoroso(final Moroso moroso);
 
 	@Secured("ROLE_FINCA")
 	Moroso getMorosoByClave(final String key);

@@ -28,8 +28,9 @@ public abstract class AbstractDaoImpl<E, I extends Serializable> implements
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public E findById(final I ident) throws DataAccessException {
-		return ((E) getCurrentSession().get(entityClass, ident));
+	public E findById(I ident) throws DataAccessException {
+		E obj = (E) getCurrentSession().get(entityClass, ident);
+		return obj;
 	}
 
 	@Override

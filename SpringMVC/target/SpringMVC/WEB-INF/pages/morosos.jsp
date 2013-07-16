@@ -63,12 +63,14 @@
 					<td>
 						<input type="submit" name="_eventId_guardarMoroso" 
 							   value="Guardar datos de este moroso" class="botonSave" />
-						<c:if test="${mensajeMoroso == 'true'}">
-							<p class="success">Datos del moroso creados exitósamente</p>								
+						<c:if test="${mensajeMoroso.estado == 'true'}">
+							<p class="success">
+								<c:out value="${mensajeMoroso.mensaje}"/>
+							</p>								
 						</c:if>
-						<c:if test="${mensajeMoroso == 'false'}">
+						<c:if test="${mensajeMoroso.estado == 'false'}">
 							<p class="failure">
-								Datos del moroso actualizados exitósamente
+								<c:out value="${mensajeMoroso.mensaje}"/>
 							</p>
 						</c:if>
 						

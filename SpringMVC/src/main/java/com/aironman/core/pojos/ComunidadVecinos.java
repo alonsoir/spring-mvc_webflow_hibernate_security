@@ -59,7 +59,7 @@ public class ComunidadVecinos implements Serializable {
 	@Column(name = "NOMBRECOMUNIDAD", nullable = false)
 	private String nombreComunidad;
 
-	@Column(name = "DIRECCION", length = 100, nullable = false, unique = true)
+	@Column(name = "DIRECCION", length = 100, nullable = false)
 	private String direccion;
 
 	@Column(name = "PRESIDENTE", length = 25, nullable = true)

@@ -23,10 +23,10 @@ public class MorosasDaoImpl extends AbstractDaoImpl<Moroso, String> implements
 	}
 
 	@Override
-	public boolean addMoroso(final Moroso value) throws DataAccessException {
+	public Moroso addMoroso(final Moroso value) throws DataAccessException {
 		// TODO Auto-generated method stub
-		merge(value);
-		return true;
+		Moroso o = (Moroso) merge(value);
+		return o;
 	}
 
 	@Override
@@ -39,7 +39,8 @@ public class MorosasDaoImpl extends AbstractDaoImpl<Moroso, String> implements
 		Moroso moroso = null;
 		if (listaMoroso != null && listaMoroso.size() > 0) {
 			moroso = listaMoroso.get(0);
-			LOG.info("getMorosoByClave. moroso: " + moroso.toString());
+			LOG.info("getMorosoByClave. nombre del moroso: "
+					+ moroso.getNombreCompleto());
 
 		}
 		return moroso;
@@ -104,7 +105,8 @@ public class MorosasDaoImpl extends AbstractDaoImpl<Moroso, String> implements
 			criterionMoroso = Restrictions.or(criteriotlfFijo);
 		}
 		if (criterionMoroso != null) {
-			LOG.info("getMorosoByCriterion. Hay varios criterios insertados...");
+			LOG.info("getMorosoByCriterion. Hay varios criterios insertados. criterionMoroso: "
+					+ criterionMoroso.toString());
 			lista = findByCriteria(criterionMoroso);
 			LOG.info("lista morosos: "
 					+ (lista != null ? lista.size() : "ATENCION! lista nula"));
@@ -113,4 +115,5 @@ public class MorosasDaoImpl extends AbstractDaoImpl<Moroso, String> implements
 		return lista != null && lista.size() > 0 ? lista.get(0) : null;
 
 	}
+
 }

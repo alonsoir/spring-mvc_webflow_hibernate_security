@@ -11,28 +11,24 @@ import com.aironman.core.pojos.JuntasOrdinarias;
 
 @Repository
 public class JuntasOrdinariasDaoImpl extends
-		AbstractDaoImpl<JuntasOrdinarias, String> implements
-		JuntasOrdinariasDao {
+		AbstractDaoImpl<JuntasOrdinarias, Long> implements JuntasOrdinariasDao {
 
 	protected JuntasOrdinariasDaoImpl() {
 		super(JuntasOrdinarias.class);
 	}
 
 	@Override
-	public boolean addJuntasOrdinarias(final JuntasOrdinarias value)
+	public JuntasOrdinarias addJuntasOrdinarias(final JuntasOrdinarias value)
 			throws DataAccessException {
-		// saveOrUpdate(value);
-		merge(value);
-		return true;
+		JuntasOrdinarias o = (JuntasOrdinarias) merge(value);
+		return o;
 	}
 
 	@Override
 	public List<JuntasOrdinarias> getJuntasOrdinariasByFecha(String fecha)
 			throws DataAccessException {
-		// TODO Auto-generated method stub
 		Criterion criterioFecha = Restrictions.like("fechaCelebracion", fecha);
 		List<JuntasOrdinarias> listajuntas = findByCriteria(criterioFecha);
 		return listajuntas;
 	}
-
 }

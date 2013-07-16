@@ -7,9 +7,9 @@ import org.springframework.dao.DataAccessException;
 import com.aironman.core.pojos.JuntasOrdinarias;
 
 public interface JuntasOrdinariasDao extends
-		AbstractDao<JuntasOrdinarias, String> {
+		AbstractDao<JuntasOrdinarias, Long> {
 
-	boolean addJuntasOrdinarias(final JuntasOrdinarias value)
+	JuntasOrdinarias addJuntasOrdinarias(final JuntasOrdinarias value)
 			throws DataAccessException;
 
 	List<JuntasOrdinarias> getJuntasOrdinariasByFecha(String fecha)

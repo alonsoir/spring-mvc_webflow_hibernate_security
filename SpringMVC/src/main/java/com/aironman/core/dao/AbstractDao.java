@@ -8,8 +8,6 @@ import org.springframework.dao.DataAccessException;
 
 public interface AbstractDao<E, I extends Serializable> {
 
-	E findById(I id) throws DataAccessException;
-
 	Object save(E e) throws DataAccessException;
 
 	void saveOrUpdate(E e) throws DataAccessException;
@@ -19,4 +17,6 @@ public interface AbstractDao<E, I extends Serializable> {
 	List<E> findByCriteria(Criterion criterion) throws DataAccessException;
 
 	public Object merge(E e) throws DataAccessException;
+
+	E findById(I ident) throws DataAccessException;
 }
