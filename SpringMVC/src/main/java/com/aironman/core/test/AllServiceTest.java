@@ -8,7 +8,8 @@ import org.springframework.test.context.ContextConfiguration;
 @Suite.SuiteClasses({ JuntasServiceTest.class,
 		ComunidadVecinosServiceTest.class, MorososServiceTest.class,
 		FincasMorosasServiceTest.class, CertificadosServiceTest.class,
-		CertificadosControllerTest.class, DespachosServiceTest.class })
+		CertificadosControllerTest.class, AdminControllerTest.class,
+		DespachosServiceTest.class })
 @ContextConfiguration(locations = { "classpath:spring/applicationContext.xml",
 		"classpath:spring/hibernateContext.xml" })
 public class AllServiceTest {

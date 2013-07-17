@@ -9,8 +9,8 @@ import com.aironman.core.pojos.Abogados;
 import com.aironman.core.pojos.Demandas;
 
 @Repository
-public class DemandasDaoImpl extends AbstractDaoImpl<Demandas, String>
-		implements DemandasDao {
+public class DemandasDaoImpl extends AbstractDaoImpl<Demandas, Long> implements
+		DemandasDao {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(DemandasDaoImpl.class);
@@ -29,11 +29,11 @@ public class DemandasDaoImpl extends AbstractDaoImpl<Demandas, String>
 	}
 
 	@Override
-	public boolean asignarAbogadoADemanda(Demandas value, Abogados abogado)
+	public boolean asignarAbogadoADemanda(Demandas demanda, Abogados abogado)
 			throws DataAccessException {
 		// TODO Auto-generated method stub
-		value.setAbogado(abogado);
-		Object o = merge(value);
+		demanda.setAbogado(abogado);
+		Object o = merge(demanda);
 		// saveOrUpdate(value);
 		return o != null ? true : false;
 

@@ -11,10 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.aironman.core.configuration.MailBean;
 import com.aironman.core.configuration.MailPropertiesConfig;
+import com.aironman.core.pojos.Abogados;
 import com.aironman.core.pojos.CertificadosServiceResponse;
 import com.aironman.core.pojos.DatosAbogado;
 import com.aironman.core.pojos.DatosDemanda;
 import com.aironman.core.pojos.DatosDemandaAdmin;
+import com.aironman.core.pojos.Demandas;
 import com.aironman.core.pojos.InfoCertificadoDeuda;
 import com.aironman.core.pojos.ServiceResponse;
 
@@ -36,6 +38,9 @@ public class DespachoServiceImpl implements DespachoService {
 
 	@Autowired
 	private MailPropertiesConfig mailProperties;
+
+	@Autowired
+	private AbogadosService abogadosService;
 
 	@Autowired
 	private UserService userService;
@@ -128,6 +133,59 @@ public class DespachoServiceImpl implements DespachoService {
 	@Secured("ROLE_ADMIN")
 	public List<DatosAbogado> traerAbogadosDisponibles() {
 		// TODO Auto-generated method stub
-		return certificadosService.traerAbogadosDisponibles();
+		return abogadosService.traerAbogadosDisponibles();
+	}
+
+	@Override
+	@Secured("ROLE_ADMIN")
+	public ServiceResponse asignarDemandaAAbogado(Long idAbogado, Long idDemanda) {
+
+		LOG.info("asignarDemandaAAbogado");
+		ServiceResponse serviceResponse = new ServiceResponse();
+
+		if (idAbogado != null && idDemanda != null) {
+
+			// hay que traer los pojos de esta demanda y del abogado
+			Demandas demanda = demandasService.traerDemanda(idDemanda);
+			LOG.info("demanda traida: "
+					+ (demanda != null && demanda.getIdDemanda() != null ? demanda
+							.getIdDemanda() : "NULA!"));
+
+			Abogados abogado = abogadosService.traerAbogadoDadoId(idAbogado);
+			LOG.info("abogado traida: "
+					+ (abogado != null && abogado.getIdAbogado() != null ? abogado
+							.getIdAbogado() : "NULO"));
+			if (demanda != null && abogado != null) {
+				// demanda.setAbogado(abogado);
+				boolean estado = demandasService.asignarAbogadoADemanda(
+						demanda, abogado);
+
+				serviceResponse.setEstado(estado);
+				serviceResponse.setIdGenerado(null);
+				serviceResponse
+						.setMensaje(estado ? abogado.getNombre() + " "
+								+ abogado.getApellidos()
+								+ " asignado a la demanda."
+								: "ATENCION!! No se ha podido asignar el abogado a la demanda!.");
+			} else {
+				LOG.info("ATENCION! la demanda traida por el idDemanda: "
+						+ idDemanda
+						+ " no existe o el abogado dado por idAbogado: "
+						+ idAbogado);
+				serviceResponse.setEstado(Boolean.FALSE);
+				serviceResponse
+						.setMensaje("ATENCION! Debe seleccionar algun abogado y una demanda!");
+			}
+
+		} else {
+			LOG.info("ATENCION! idAbogado y idDemanda deben venir seteados. idAbogado: "
+					+ idAbogado + " idDemanda: " + idDemanda);
+			serviceResponse.setEstado(Boolean.FALSE);
+			serviceResponse
+					.setMensaje("ATENCION! Debe seleccionar algun abogado y una demanda!");
+		}
+
+		// TODO Auto-generated method stub
+		return serviceResponse;
 	}
 }

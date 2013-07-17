@@ -57,6 +57,19 @@ public class DespachosServiceTest {
 	}
 
 	@Test
+	public void testasignarDemandaAAbogado() {
+
+		Long idAbogado = 3l;
+		Long idDemanda = 1l;
+
+		ServiceResponse serviceResponse = despachoService
+				.asignarDemandaAAbogado(idAbogado, idDemanda);
+
+		Assert.assertTrue(serviceResponse.getEstado());
+
+	}
+
+	@Test
 	public void testtraerCertificadosAdmin() {
 		// esto esta fallando ahora!!
 		List<DatosDemandaAdmin> lista = despachoService

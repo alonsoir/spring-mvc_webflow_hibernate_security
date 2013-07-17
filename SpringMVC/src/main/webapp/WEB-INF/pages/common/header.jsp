@@ -58,6 +58,12 @@ input[type="checkbox"] {
 	width: 20px;
 }
 
+
+input[type="radio"] {
+	display: inline !important;
+	width: 10px;
+}
+
 input {
 	display: block;
 	width: 340px;

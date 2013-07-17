@@ -8,6 +8,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,9 +38,10 @@ public class DemandasServiceImpl implements DemandasService {
 	private HistoricoDemandasDao historicoDemandasDao;
 
 	@Override
-	public boolean asignarAbogadoADemanda(Demandas value, Abogados abogado) {
-		// TODO Auto-generated method stub
-		return demandasDao.asignarAbogadoADemanda(value, abogado);
+	@Transactional(readOnly = false)
+	public boolean asignarAbogadoADemanda(Demandas demanda, Abogados abogado) {
+
+		return demandasDao.asignarAbogadoADemanda(demanda, abogado);
 	}
 
 	@Override
@@ -87,5 +89,12 @@ public class DemandasServiceImpl implements DemandasService {
 
 		historicoDemandasDao
 				.crearHistoricoDemanda(historicoDemandasViviendasAdeudadas);
+	}
+
+	@Override
+	@Secured("ROLE_ADMIN")
+	public Demandas traerDemanda(Long idDemanda) {
+		// TODO Auto-generated method stub
+		return demandasDao.findById(idDemanda);
 	}
 }

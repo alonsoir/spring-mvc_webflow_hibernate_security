@@ -16,7 +16,6 @@
 				<th>MONTANTE</th>
 				<th>NOMBRE COMUNIDAD</th>
 				<th>DIRECCION COMUNIDAD</th>
-
 				<th>REF. CATASTRAL</th>
 				<th></th>
 

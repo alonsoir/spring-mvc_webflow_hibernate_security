@@ -454,9 +454,20 @@ el security.xml no es buena...
 
 http://stackoverflow.com/questions/12355992/one-of-my-roles-is-not-working-in-spring-security-3-1
 
+17 de julio 
 recuerda, esto siempre antes de empezar a desarrollar y por supuesto que estos valores a produccion.
 MAVEN_OPTS="-server -XX:MaxPermSize=512M -ms1024M -mx1024M"
 export MAVEN_OPTS
 
 en ppio tienes ya picado el codigo para traer los certificados y los abogados disponibles para el admin, con los tests, que tienen que ser validados.
 Tienes un controller y una jsp para el admin, al que hay que darle otra vuelta pues da una excepcion cuando me intento renderizar los abogados disponibles...CHECK!
+
+http://www.mkyong.com/spring-mvc/spring-mvc-dropdown-box-example/ DONE	
+
+Aparentemen estas asignado un abogado a una demanda pero no es asi, no se esta seteando! CHECK!!
+
+ tambien tienes que mostrar la direccion de la comunidad cambiar DONE!
+la pagina admin, tambien tienes que hacer que spring security cuando detecte que se loga el admin, vaya a su pagina admin.
+
+
+Debes mostrar el nombre del abogado en caso de que la demanda tenga asignado uno PARA HACER!!!

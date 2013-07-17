@@ -1,6 +1,0 @@
-127.0.0.1 - - [16/Jul/2013:18:34:51 +0200] "GET /SpringMVC/admin HTTP/1.1" 302 - http-bio-8080-exec-1 147
-127.0.0.1 - - [16/Jul/2013:18:34:55 +0200] "GET /SpringMVC/invalidSession.htm HTTP/1.1" 200 6091 http-bio-8080-exec-2 4275
-127.0.0.1 - - [16/Jul/2013:18:34:58 +0200] "POST /SpringMVC/j_spring_security_check HTTP/1.1" 302 - http-bio-8080-exec-3 86
-127.0.0.1 - - [16/Jul/2013:18:34:58 +0200] "GET /SpringMVC/flows HTTP/1.1" 302 - http-bio-8080-exec-4 16
-127.0.0.1 - - [16/Jul/2013:18:34:59 +0200] "GET /SpringMVC/403 HTTP/1.1" 200 5555 http-bio-8080-exec-5 492
-127.0.0.1 - - [16/Jul/2013:18:35:08 +0200] "GET /SpringMVC/admin HTTP/1.1" 500 12718 http-bio-8080-exec-6 934

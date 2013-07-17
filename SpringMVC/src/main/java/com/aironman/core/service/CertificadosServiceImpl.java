@@ -27,14 +27,12 @@ import net.sf.jasperreports.engine.export.ooxml.JRDocxExporterParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.aironman.core.configuration.CertificadosBean;
 import com.aironman.core.configuration.CertificadosPropertiesConfig;
 import com.aironman.core.pojos.CertificadosServiceResponse;
-import com.aironman.core.pojos.DatosAbogado;
 import com.aironman.core.pojos.DatosDemanda;
 import com.aironman.core.pojos.DatosDemandaAdmin;
 import com.aironman.core.pojos.InfoCertificadoDeuda;
@@ -113,7 +111,9 @@ public class CertificadosServiceImpl implements CertificadosService {
 			+ "d.fechainicio as fechainiciodemanda ,"
 			+ "d.tipo as estado_demanda, "
 			+ "u.username as cliente_admin_fincas, "
-			+ "d.iddemanda as iddemanda "
+			+ "d.iddemanda as iddemanda, "
+			+ "com.ciudad as ciudad, "
+			+ "com.cp as cp "
 			+ "from demandas d, historico_demandas_viviendas h,viviendascondeudas viv,comunidadvecinos com,moroso mor,users u "
 			+ "where d.iddemanda = h.demanda_iddemanda "
 			+ "AND viv.iddeuda=h.deudora_iddeuda "
@@ -480,6 +480,7 @@ public class CertificadosServiceImpl implements CertificadosService {
 
 	}
 
+	// esto mejor ponerlo en un servicio de demandas, me chirria verlo aqui
 	@Override
 	public List<DatosDemandaAdmin> traerCertificadosAdmin() {
 
@@ -504,6 +505,8 @@ public class CertificadosServiceImpl implements CertificadosService {
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 
+				String ciudad = rs.getString("ciudad");
+				String cp = rs.getString("cp");
 				BigDecimal montante = rs.getBigDecimal("montante");
 				String rutacertificado = rs.getString("rutacertificado");
 				String direccion_vivienda = rs.getString("direccion_vivienda");
@@ -520,9 +523,19 @@ public class CertificadosServiceImpl implements CertificadosService {
 				switch (DatosDemanda.ESTADO_DEMANDA.values()[estadoDemanda]) {
 				case ENVIADA_A_JURIDIA: {
 					// LOG.info("_estadoDemanda: " + _estadoDemanda);
-					info = new DatosDemandaAdmin(montante, "ENVIADA_A_JURIDIA",
-							rutacertificado, direccion_vivienda, nombre_moroso,
+
+					/**
+					 * DatosDemandaAdmin(BigDecimal montante, String
+					 * rutaCertificado, String direccionVivienda, String
+					 * nombreMoroso, String tlfFijoMoroso, String
+					 * tlfMovilMoroso, String fechaIniciaDemanda, String
+					 * estadoDemanda, String cp, String ciudad, String
+					 * usernameFincas, Long idDemanda)
+					 * */
+					info = new DatosDemandaAdmin(montante, rutacertificado,
+							direccion_vivienda, nombre_moroso,
 							telefonofijo_moroso, tlf_movil, fechainiciodemanda,
+							"ENVIADA_A_JURIDIA", cp, ciudad,
 							cliente_admin_fincas, iddemanda);
 
 				}
@@ -531,10 +544,10 @@ public class CertificadosServiceImpl implements CertificadosService {
 					DatosDemanda.ESTADO_DEMANDA _estadoDemanda = DatosDemanda.ESTADO_DEMANDA.ASIGNADA_A_ABOGADO;
 
 					// LOG.info("_estadoDemanda: " + _estadoDemanda);
-					info = new DatosDemandaAdmin(montante,
-							"ASIGNADA_A_ABOGADO", rutacertificado,
+					info = new DatosDemandaAdmin(montante, rutacertificado,
 							direccion_vivienda, nombre_moroso,
 							telefonofijo_moroso, tlf_movil, fechainiciodemanda,
+							"ASIGNADA_A_ABOGADO", cp, ciudad,
 							cliente_admin_fincas, iddemanda);
 
 				}
@@ -542,10 +555,11 @@ public class CertificadosServiceImpl implements CertificadosService {
 				case CERRADA: {
 					DatosDemanda.ESTADO_DEMANDA _estadoDemanda = DatosDemanda.ESTADO_DEMANDA.CERRADA;
 
-					info = new DatosDemandaAdmin(montante, "CERRADA",
-							rutacertificado, direccion_vivienda, nombre_moroso,
+					info = new DatosDemandaAdmin(montante, rutacertificado,
+							direccion_vivienda, nombre_moroso,
 							telefonofijo_moroso, tlf_movil, fechainiciodemanda,
-							cliente_admin_fincas, iddemanda);
+							"CERRADA", cp, ciudad, cliente_admin_fincas,
+							iddemanda);
 				}
 					break;
 				default: {
@@ -583,61 +597,4 @@ public class CertificadosServiceImpl implements CertificadosService {
 
 	}
 
-	@Override
-	@Secured("ROLE_ADMIN")
-	public List<DatosAbogado> traerAbogadosDisponibles() {
-		// TODO Auto-generated method stub
-		Connection conn = null;
-		DatosAbogado info = null;
-		List<DatosAbogado> listaDatosAbogado = new ArrayList<DatosAbogado>();
-
-		try {
-			CertificadosBean beanProperties = certificadosProperties
-					.getCertificadosProperties();
-
-			String rutaConexiondb = beanProperties.getRUTA_CONEXION_DB().trim();
-			String passdb = beanProperties.getPASS_DB().trim();
-			String userdb = beanProperties.getUSUARIO_DB().trim();
-
-			conn = DriverManager.getConnection(rutaConexiondb, userdb, passdb);
-			conn.setAutoCommit(false);
-			PreparedStatement ps = conn
-					.prepareStatement(SQL_ABOGADOS_DISPONIBLES);
-			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
-				Long idabogado = rs.getLong("idabogado");
-				String nombre = rs.getString("nombre");
-				String apellidos = rs.getString("apellidos");
-				String cp = rs.getString("cp");
-				String direccion = rs.getString("direccion");
-				String tlfContacto = rs.getString("tlf");
-				String ciudad = rs.getString("ciudad");
-				info = new DatosAbogado(idabogado, nombre, apellidos, ciudad,
-						cp, direccion, tlfContacto);
-				listaDatosAbogado.add(info);
-
-			}
-			// LOG.info("listaCertificados.size: " + listaCertificados.size());
-			rs.close();
-			ps.close();
-
-		} catch (SQLException e) {
-			LOG.info("ERROR al traerCertificados. ", e);
-
-		} finally {
-			if (conn != null) {
-				try {
-					LOG.info("CertificadoService. Tratando de cerrar la conexion con la bd...");
-					conn.close();
-					LOG.info("CertificadoService. conexion cerrada con la bd...");
-				} catch (SQLException e) {
-					LOG.info(
-							"ERROR Tratando de cerrar la conexion con la bd... ",
-							e);
-				}
-			}
-
-		}
-		return listaDatosAbogado;
-	}
 }

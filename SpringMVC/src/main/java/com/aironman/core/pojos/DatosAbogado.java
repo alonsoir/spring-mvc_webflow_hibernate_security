@@ -21,6 +21,10 @@ public class DatosAbogado implements java.io.Serializable {
 
 	private String tlfContacto;
 
+	public DatosAbogado() {
+
+	}
+
 	public DatosAbogado(Long idAbogado, String nombre, String apellidos,
 			String ciudad, String cp, String direccion, String tlfContacto) {
 		super();

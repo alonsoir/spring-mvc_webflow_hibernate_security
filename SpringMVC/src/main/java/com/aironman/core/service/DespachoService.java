@@ -27,8 +27,11 @@ public interface DespachoService {
 			String rutaFisicaDemanda, Long idDeuda);
 
 	@Secured("ROLE_ADMIN")
-	public List<DatosDemandaAdmin> traerCertificadosAdmin();
+	List<DatosDemandaAdmin> traerCertificadosAdmin();
 
 	@Secured("ROLE_ADMIN")
-	public List<DatosAbogado> traerAbogadosDisponibles();
+	List<DatosAbogado> traerAbogadosDisponibles();
+
+	@Secured("ROLE_ADMIN")
+	ServiceResponse asignarDemandaAAbogado(Long idAbogado, Long idDemanda);
 }

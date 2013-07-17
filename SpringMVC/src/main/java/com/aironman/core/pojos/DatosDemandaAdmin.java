@@ -18,16 +18,17 @@ public class DatosDemandaAdmin implements java.io.Serializable {
 	private String tlfMovilMoroso;
 	private String fechaIniciaDemanda;
 	private String estadoDemanda;
-
+	private String cp;
+	private String ciudad;
 	private String usernameFincas;
 	private Long idDemanda;
 
-	public DatosDemandaAdmin(BigDecimal montante, String estadoDemanda,
-			String rutaCertificado, String direccionVivienda,
-			String nombreMoroso, String tlfFijoMoroso, String tlfMovilMoroso,
-			String fechaIniciaDemanda, String usernameFincas, Long idDemanda) {
+	public DatosDemandaAdmin(BigDecimal montante, String rutaCertificado,
+			String direccionVivienda, String nombreMoroso,
+			String tlfFijoMoroso, String tlfMovilMoroso,
+			String fechaIniciaDemanda, String estadoDemanda, String cp,
+			String ciudad, String usernameFincas, Long idDemanda) {
 		super();
-		this.estadoDemanda = estadoDemanda;
 		this.montante = montante;
 		this.rutaCertificado = rutaCertificado;
 		this.direccionVivienda = direccionVivienda;
@@ -35,6 +36,9 @@ public class DatosDemandaAdmin implements java.io.Serializable {
 		this.tlfFijoMoroso = tlfFijoMoroso;
 		this.tlfMovilMoroso = tlfMovilMoroso;
 		this.fechaIniciaDemanda = fechaIniciaDemanda;
+		this.estadoDemanda = estadoDemanda;
+		this.cp = cp;
+		this.ciudad = ciudad;
 		this.usernameFincas = usernameFincas;
 		this.idDemanda = idDemanda;
 	}
@@ -119,25 +123,34 @@ public class DatosDemandaAdmin implements java.io.Serializable {
 		this.idDemanda = idDemanda;
 	}
 
-	@Override
-	public String toString() {
-		return "DatosDemandaAdmin [montante=" + montante + ", rutaCertificado="
-				+ rutaCertificado + ", direccionVivienda=" + direccionVivienda
-				+ ", nombreMoroso=" + nombreMoroso + ", tlfFijoMoroso="
-				+ tlfFijoMoroso + ", tlfMovilMoroso=" + tlfMovilMoroso
-				+ ", fechaIniciaDemanda=" + fechaIniciaDemanda
-				+ ", usernameFincas=" + usernameFincas + ", idDemanda="
-				+ idDemanda + "]";
+	public String getCp() {
+		return cp;
+	}
+
+	public void setCp(String cp) {
+		this.cp = cp;
+	}
+
+	public String getCiudad() {
+		return ciudad;
+	}
+
+	public void setCiudad(String ciudad) {
+		this.ciudad = ciudad;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((ciudad == null) ? 0 : ciudad.hashCode());
+		result = prime * result + ((cp == null) ? 0 : cp.hashCode());
 		result = prime
 				* result
 				+ ((direccionVivienda == null) ? 0 : direccionVivienda
 						.hashCode());
+		result = prime * result
+				+ ((estadoDemanda == null) ? 0 : estadoDemanda.hashCode());
 		result = prime
 				* result
 				+ ((fechaIniciaDemanda == null) ? 0 : fechaIniciaDemanda
@@ -168,10 +181,25 @@ public class DatosDemandaAdmin implements java.io.Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		DatosDemandaAdmin other = (DatosDemandaAdmin) obj;
+		if (ciudad == null) {
+			if (other.ciudad != null)
+				return false;
+		} else if (!ciudad.equals(other.ciudad))
+			return false;
+		if (cp == null) {
+			if (other.cp != null)
+				return false;
+		} else if (!cp.equals(other.cp))
+			return false;
 		if (direccionVivienda == null) {
 			if (other.direccionVivienda != null)
 				return false;
 		} else if (!direccionVivienda.equals(other.direccionVivienda))
+			return false;
+		if (estadoDemanda == null) {
+			if (other.estadoDemanda != null)
+				return false;
+		} else if (!estadoDemanda.equals(other.estadoDemanda))
 			return false;
 		if (fechaIniciaDemanda == null) {
 			if (other.fechaIniciaDemanda != null)
@@ -214,6 +242,18 @@ public class DatosDemandaAdmin implements java.io.Serializable {
 		} else if (!usernameFincas.equals(other.usernameFincas))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "DatosDemandaAdmin [montante=" + montante + ", rutaCertificado="
+				+ rutaCertificado + ", direccionVivienda=" + direccionVivienda
+				+ ", nombreMoroso=" + nombreMoroso + ", tlfFijoMoroso="
+				+ tlfFijoMoroso + ", tlfMovilMoroso=" + tlfMovilMoroso
+				+ ", fechaIniciaDemanda=" + fechaIniciaDemanda
+				+ ", estadoDemanda=" + estadoDemanda + ", cp=" + cp
+				+ ", ciudad=" + ciudad + ", usernameFincas=" + usernameFincas
+				+ ", idDemanda=" + idDemanda + "]";
 	}
 
 }
