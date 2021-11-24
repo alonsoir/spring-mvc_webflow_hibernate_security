@@ -31,7 +31,7 @@
 		<jasperreports.version>5.0.1</jasperreports.version>
 		<groovy.version>1.8.6</groovy.version>
 		<junit.version>4.13.1</junit.version>
-		<slf4jVersion>1.7.5</slf4jVersion>
+		<slf4jVersion>1.7.32</slf4jVersion>
 	</properties>
 
 	<dependencies>
