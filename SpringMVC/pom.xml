@@ -28,7 +28,7 @@
 		<slf4j-simple.version>1.6.1</slf4j-simple.version>
 		<slf4j-log4j12.version>1.6.4</slf4j-log4j12.version>
 		<jasperreports-maven-plugin.version>1.0-beta-2</jasperreports-maven-plugin.version>
-		<jasperreports.version>5.0.1</jasperreports.version>
+		<jasperreports.version>6.4.1</jasperreports.version>
 		<groovy.version>1.8.6</groovy.version>
 		<junit.version>4.13.1</junit.version>
 		<slf4jVersion>1.7.5</slf4jVersion>
