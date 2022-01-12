@@ -11,7 +11,7 @@
 
 	<properties>
 		<tomcat-servlet-api.version>7.0.30</tomcat-servlet-api.version>
-		<spring.version>5.3.9</spring.version>
+		<spring.version>5.3.14</spring.version>
 		<springwebflow.version>2.3.2.RELEASE</springwebflow.version>
 		<spring-security.version>5.5.2</spring-security.version>
 		<jetty-maven-plugin.version>8.1.4.v20120524</jetty-maven-plugin.version>
